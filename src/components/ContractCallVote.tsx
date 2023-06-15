@@ -10,14 +10,15 @@ import {
 } from "@stacks/transactions";
 import { userSession } from "./ConnectWallet";
 import { uint } from "@stacks/transactions/dist/cl";
+import { Button } from "@chakra-ui/react";
 
-const ContractCallMintSbtc = () => {
+const ContractCallVote: React.FC = () => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  function vote(pick) {
+  function vote() {
     const userAddress = userSession.loadUserData().profile.stxAddress.testnet;
     doContractCall({
       network: new StacksMocknet(),
@@ -30,12 +31,14 @@ const ContractCallMintSbtc = () => {
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        window
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?api=http://localhost:3999`,
-            "_blank"
-          )
-          .focus();
+        if (typeof window !== "undefined" && data.txId) {
+          window
+            .open(
+              `https://explorer.stacks.co/txid/${data.txId}?chain=testnet`,
+              "_blank"
+            )
+            ?.focus();
+        }
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");
@@ -43,7 +46,7 @@ const ContractCallMintSbtc = () => {
     });
   }
 
-  function vote2(pick) {
+  function vote2() {
     const userAddress = userSession.loadUserData().profile.stxAddress.testnet;
     const cpCV = contractPrincipalCV(
       "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
@@ -61,12 +64,14 @@ const ContractCallMintSbtc = () => {
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        window
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?api=http://localhost:3999`,
-            "_blank"
-          )
-          .focus();
+        if (typeof window !== "undefined" && data.txId) {
+          window
+            .open(
+              `https://explorer.stacks.co/txid/${data.txId}?chain=testnet`,
+              "_blank"
+            )
+            ?.focus();
+        }
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");
@@ -81,12 +86,8 @@ const ContractCallMintSbtc = () => {
   return (
     <div>
       <h3>Mint sBTC Calls</h3>
-      <button className="Vote" onClick={() => vote("🍊")}>
-        Mint sBTC 🍊
-      </button>
-      <button className="Vote" onClick={() => vote2("🍎")}>
-        Create sBTC calls 🍎
-      </button>
+      <Button onClick={() => vote()}>Mint sBTC 🍊</Button>
+      <Button onClick={() => vote2()}>Create sBTC calls 🍎</Button>
       <h6>
         When you create a CALL, you send 3 million sBTC satoshis to the contract
         which will hold it in escrow, at the same time you define the price in
@@ -101,4 +102,4 @@ const ContractCallMintSbtc = () => {
   );
 };
 
-export default ContractCallMintSbtc;
+export default ContractCallVote;

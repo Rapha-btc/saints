@@ -11,7 +11,8 @@ import ExpirationSelector from "./components/ExpirationSelector";
 import { Expiration } from "./hooks/useExpirations";
 import { useState } from "react";
 import SliderCallNumber from "./components/SliderCallNumber";
-import ContractCallMintSbtc from "./components/MintSbtc";
+
+import ContractCallVote from "./components/ContractCallVote";
 
 export interface CallQuery {
   expiration: Expiration | null;
@@ -48,7 +49,7 @@ function App() {
         >
           <SliderCallNumber />
         </HStack>
-        <ContractCallMintSbtc />
+        <ContractCallVote />
       </GridItem>
     </Grid>
   );
