@@ -9,11 +9,14 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
+  Spacer,
+  TagLabel,
 } from "@chakra-ui/react";
 import React from "react";
 
 function SliderCallNumber() {
   const [value, setValue] = React.useState(1);
+  const handleChange = (value) => setValue(value);
 
   return (
     <Flex>
@@ -24,7 +27,7 @@ function SliderCallNumber() {
         maxW="100px"
         mr="2rem"
         value={value}
-        onChange={(value) => setValue(parseInt(value))}
+        onChange={handleChange}
       >
         <NumberInputField />
         <NumberInputStepper>
@@ -36,7 +39,9 @@ function SliderCallNumber() {
         flex="1"
         focusThumbOnChange={false}
         value={value}
-        onChange={(value) => setValue(value)}
+        onChange={handleChange}
+        size={"md"}
+        step={3}
       >
         <SliderTrack>
           <SliderFilledTrack />

@@ -12,27 +12,22 @@ import { userSession } from "./ConnectWallet";
 import { uint } from "@stacks/transactions/dist/cl";
 import { Button } from "@chakra-ui/react";
 
-const ContractCallVote: React.FC = () => {
+const MintSbtc: React.FC = () => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  function vote2() {
+  function vote() {
     const userAddress = userSession.loadUserData().profile.stxAddress.testnet;
-    const cpCV = contractPrincipalCV(
-      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
-      "sbtc"
-    );
-
     doContractCall({
       network: new StacksMocknet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
-      contractName: "bitcoin-call",
+      contractName: "sbtc",
       functionName: "mint",
-      functionArgs: [cpCV, uint(99000000), uint(1500)],
-      postConditionMode: PostConditionMode.Allow,
+      functionArgs: [uint(100000000), standardPrincipalCV(userAddress)],
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -55,7 +50,11 @@ const ContractCallVote: React.FC = () => {
     return null;
   }
 
-  return <Button onClick={() => vote2()}>Create sBTC calls 🍎</Button>;
+  return (
+    <div>
+      <Button onClick={() => vote()}>Free sBTC 🍊</Button>
+    </div>
+  );
 };
 
-export default ContractCallVote;
+export default MintSbtc;
