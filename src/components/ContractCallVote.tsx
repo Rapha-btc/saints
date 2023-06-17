@@ -1,39 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useConnect } from "@stacks/connect-react";
 import { StacksMocknet } from "@stacks/network";
-import {
-  AnchorMode,
-  PostConditionMode,
-  stringUtf8CV,
-  standardPrincipalCV,
-  contractPrincipalCV,
-} from "@stacks/transactions";
+import { AnchorMode, PostConditionMode } from "@stacks/transactions";
 import { userSession } from "./ConnectWallet";
-import { uint } from "@stacks/transactions/dist/cl";
+
 import { Button } from "@chakra-ui/react";
 
-const ContractCallVote: React.FC = () => {
+interface Props {
+  contractAddress: string;
+  contractName: string;
+  functionName: string;
+  functionArgs: any[];
+  postConditions: any[];
+  buttonLabel: string;
+}
+
+const ContractCallVote: React.FC<Props> = ({
+  contractAddress,
+  contractName,
+  functionName,
+  functionArgs,
+  postConditions,
+  buttonLabel,
+}: Props) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   function vote2() {
-    const userAddress = userSession.loadUserData().profile.stxAddress.testnet;
-    const cpCV = contractPrincipalCV(
-      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
-      "sbtc"
-    );
-
     doContractCall({
       network: new StacksMocknet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
-      contractName: "bitcoin-call",
-      functionName: "mint",
-      functionArgs: [cpCV, uint(99000000), uint(1500)],
+      contractAddress: contractAddress,
+      contractName: contractName,
+      functionName: functionName,
+      functionArgs: functionArgs,
       postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditions: postConditions,
       onFinish: (data) => {
         console.log("onFinish:", data);
         if (typeof window !== "undefined" && data.txId) {
@@ -55,7 +59,7 @@ const ContractCallVote: React.FC = () => {
     return null;
   }
 
-  return <Button onClick={() => vote2()}>Create sBTC calls 🍎</Button>;
+  return <Button onClick={() => vote2()}>{buttonLabel}</Button>;
 };
 
 export default ContractCallVote;
