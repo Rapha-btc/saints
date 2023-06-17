@@ -20,14 +20,28 @@ import { useState } from "react";
 import SliderCallNumber from "./components/SliderCallNumber";
 import StrikeInput from "./components/StrikeInput";
 import ContractCallVote from "./components/ContractCallVote";
-import MintSbtc from "./components/MintSbtc";
+import { standardPrincipalCV, contractPrincipalCV } from "@stacks/transactions";
+import { uint } from "@stacks/transactions/dist/cl";
+import { userSession } from "./components/ConnectWallet";
+import calloption from "./assets/call-option.jpg";
 
 export interface CallQuery {
   expiration: Expiration | null;
+  btc_locked: number;
+  strike: number;
 }
 
 function App() {
   const [callQuery, setCallQuery] = useState<CallQuery>({} as CallQuery);
+  const cAdd = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
+  const cpCV = contractPrincipalCV(
+    "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+    "sbtc"
+  );
+  let userAddress = "SP000000000000000000002Q6VF78"; // I don't know if this is a good way of coding this but it works! :P
+  if (userSession.isUserSignedIn()) {
+    userAddress = userSession.loadUserData().profile.stxAddress.testnet;
+  }
   return (
     <Grid
       templateAreas={{
@@ -79,8 +93,25 @@ function App() {
           <Divider />
           <CardFooter>
             <ButtonGroup spacing="2">
-              <ContractCallVote />
-              <MintSbtc />
+              <ContractCallVote
+                contractAddress={cAdd}
+                contractName="bitcoin-call"
+                functionName="mint"
+                functionArgs={[cpCV, uint(99000000), uint(1500)]}
+                postConditions={[]}
+                buttonLabel="Create sBTC calls 🍎"
+              />
+              <ContractCallVote
+                contractAddress={cAdd}
+                contractName="sbtc"
+                functionName="mint"
+                functionArgs={[
+                  uint(99000000),
+                  standardPrincipalCV(userAddress),
+                ]}
+                postConditions={[]}
+                buttonLabel="Free sBTC 🍊"
+              />
             </ButtonGroup>
           </CardFooter>
         </Card>
