@@ -20,19 +20,40 @@ import { useState } from "react";
 import SliderCallNumber from "./components/SliderCallNumber";
 import StrikeInput from "./components/StrikeInput";
 import ContractCallVote from "./components/ContractCallVote";
-import { standardPrincipalCV, contractPrincipalCV } from "@stacks/transactions";
 import { uint } from "@stacks/transactions/dist/cl";
 import { userSession } from "./components/ConnectWallet";
 import calloption from "./assets/call-option.jpg";
 
+import {
+  trueCV,
+  falseCV,
+  noneCV,
+  someCV,
+  intCV,
+  uintCV,
+  standardPrincipalCV,
+  contractPrincipalCV,
+  responseErrorCV,
+  responseOkCV,
+  listCV,
+  tupleCV,
+  bufferCV,
+  UIntCV,
+} from "@stacks/transactions";
+import CollatSlider from "./components/CollatSlider";
+
 export interface CallQuery {
   expiration: Expiration | null;
-  btc_locked: number;
-  strike: number;
+  btclocked: UIntCV | null;
+  strike: UIntCV | null;
 }
 
 function App() {
-  const [callQuery, setCallQuery] = useState<CallQuery>({} as CallQuery);
+  const [callQuery, setCallQuery] = useState<CallQuery>({
+    expiration: null,
+    btclocked: uintCV(3000000),
+    strike: uintCV(1500),
+  } as CallQuery);
   const cAdd = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
   const cpCV = contractPrincipalCV(
     "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
@@ -77,40 +98,75 @@ function App() {
               <ExpirationSelector
                 selectedExpiration={callQuery.expiration}
                 onSelectExpiration={(expiration) =>
-                  setCallQuery({ ...callQuery, expiration })
+                  setCallQuery({ ...callQuery, expiration: expiration })
                 }
               />
               <Text color="orange.600" fontSize="xl">
-                Btc-locked: 3m sats
+                Btc-locked in sats
               </Text>
-              <SliderCallNumber />
+              {/* <SliderCallNumber
+                onCollateralChange={(
+                  valueAsString: string,
+                  valueAsNumber: number
+                ) =>
+                  setCallQuery({
+                    ...callQuery,
+                    btc_locked: uintCV(valueAsNumber),
+                  })
+                }
+              /> */}
+              <CollatSlider
+                onCollateralChange={(valueAsNumber: number) =>
+                  setCallQuery({
+                    ...callQuery,
+                    btclocked: uintCV(valueAsNumber * 300000),
+                  })
+                }
+                // {(valueAsNumber: number) =>
+                //   console.log(valueAsNumber)
+                // }
+              />
               <Text color="blue.600" fontSize="xl">
-                Strike: 1500 STX
+                Strike-price in stx
               </Text>
-              <StrikeInput />
+              <StrikeInput
+                onStrikeChange={(
+                  valueAsString: string,
+                  valueAsNumber: number
+                ) =>
+                  setCallQuery({
+                    ...callQuery,
+                    strike: uintCV(valueAsNumber),
+                  })
+                }
+                // {(
+                //   valueAsString: string,
+                //   valueAsNumber: number
+                // ) => console.log(valueAsNumber)}
+              />
             </Stack>
           </CardBody>
           <Divider />
           <CardFooter>
-            <ButtonGroup spacing="2">
-              <ContractCallVote
-                contractAddress={cAdd}
-                contractName="bitcoin-call"
-                functionName="mint"
-                functionArgs={[cpCV, uint(99000000), uint(1500)]}
-                postConditions={[]}
-                buttonLabel="Create sBTC calls 🍎"
-              />
+            <ButtonGroup spacing="6">
               <ContractCallVote
                 contractAddress={cAdd}
                 contractName="sbtc"
                 functionName="mint"
                 functionArgs={[
-                  uint(99000000),
+                  uint(100000000),
                   standardPrincipalCV(userAddress),
                 ]}
                 postConditions={[]}
                 buttonLabel="Free sBTC 🍊"
+              />
+              <ContractCallVote
+                contractAddress={cAdd}
+                contractName="bitcoin-call"
+                functionName="mint"
+                functionArgs={[cpCV, callQuery.btclocked, callQuery.strike]} // callQuery.strike // expiration: callQuery.expiration
+                postConditions={[]}
+                buttonLabel="Create Calls 🍎"
               />
             </ButtonGroup>
           </CardFooter>

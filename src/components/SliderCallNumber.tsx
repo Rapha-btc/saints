@@ -9,15 +9,23 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-  Spacer,
-  TagLabel,
 } from "@chakra-ui/react";
 import React from "react";
 
-function SliderCallNumber() {
-  const [value, setValue] = React.useState(1);
-  const handleChange = (value) => setValue(value);
+interface Props {
+  onCollateralChange: (valueAsString: string, valueAsNumber: number) => void;
+}
 
+function SliderCallNumber({ onCollateralChange }: Props) {
+  const [value, setValue] = React.useState(1);
+  const handleChange = (whatever: string, value: number) => {
+    onCollateralChange(whatever, value);
+    setValue(value);
+  };
+  const handleChange2 = (value: number) => {
+    onCollateralChange("whatever", value);
+    setValue(value);
+  };
   return (
     <Flex>
       <NumberInput
@@ -39,7 +47,7 @@ function SliderCallNumber() {
         flex="1"
         focusThumbOnChange={false}
         value={value}
-        onChange={handleChange}
+        onChange={handleChange2}
         size={"md"}
         step={3}
       >

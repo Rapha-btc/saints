@@ -1,19 +1,28 @@
 import {
   FormControl,
-  FormLabel,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  InputLeftAddon,
 } from "@chakra-ui/react";
-import React from "react";
 
-const StrikeInput = () => {
+interface Props {
+  onStrikeChange: (valueAsString: string, valueAsNumber: number) => void;
+}
+
+const StrikeInput = ({ onStrikeChange }: Props) => {
   return (
     <FormControl>
-      {/* <FormLabel>Strike STX</FormLabel> */}
-      <NumberInput max={3000} min={750} defaultValue={1500}>
+      <NumberInput
+        max={3000}
+        min={750}
+        defaultValue={1500}
+        onChange={onStrikeChange}
+        color={"blue.600"}
+        alignContent={"right"}
+      >
         <NumberInputField />
         <NumberInputStepper>
           <NumberIncrementStepper />
