@@ -5,5 +5,4 @@
 When creating a CALL, you deposit 3m sats into escrow and set a strike price in STX.
 A CALL holder can buy these 3m sats from the contract at your set price by sending the STX strike price to you. Their right to do so expires after a predetermined block number.
 
-https://www.youtube.com/watch?v=n7CGOMxW8dE&t=4s
-https://youtube.com/clip/UgkxcHkyDExMDzHMXXEMrpljHzI7ZMc30a0i
+https://www.youtube.com/watch?v=3mj5DIqdEPQ
