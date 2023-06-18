@@ -85,7 +85,9 @@ function App() {
           borderRadius="lg"
         /> */}
             <Stack mt="6" spacing="3">
-              <Heading size="xl">Create sBTC Calls</Heading>
+              <Heading colorScheme="purple" size="xl">
+                sBTC call options
+              </Heading>
               <Text fontSize="xs" as="em">
                 When creating a CALL, you deposit 3m sats into escrow and set a
                 strike price in STX.
@@ -119,7 +121,7 @@ function App() {
                 onCollateralChange={(valueAsNumber: number) =>
                   setCallQuery({
                     ...callQuery,
-                    btclocked: uintCV(valueAsNumber * 300000),
+                    btclocked: uintCV(valueAsNumber * 1000000),
                   })
                 }
                 // {(valueAsNumber: number) =>
@@ -149,7 +151,7 @@ function App() {
           <Divider />
           <CardFooter>
             <ButtonGroup spacing="6">
-              <ContractCallVote
+              {/* <ContractCallVote
                 contractAddress={cAdd}
                 contractName="sbtc"
                 functionName="mint"
@@ -158,15 +160,15 @@ function App() {
                   standardPrincipalCV(userAddress),
                 ]}
                 postConditions={[]}
-                buttonLabel="Free sBTC 🍊"
-              />
+                buttonLabel="Free sBTC 🍊🍎"
+              /> */}
               <ContractCallVote
                 contractAddress={cAdd}
                 contractName="bitcoin-call"
                 functionName="mint"
                 functionArgs={[cpCV, callQuery.btclocked, callQuery.strike]} // callQuery.strike // expiration: callQuery.expiration
                 postConditions={[]}
-                buttonLabel="Create Calls 🍎"
+                buttonLabel="Mint Calls 🍊"
               />
             </ButtonGroup>
           </CardFooter>

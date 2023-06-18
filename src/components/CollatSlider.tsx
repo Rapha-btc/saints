@@ -11,23 +11,23 @@ interface Props {
 }
 
 const CollatSlider = ({ onCollateralChange }: Props) => {
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(3);
   const handleChange = (value: number) => {
     setValue(value);
   };
 
   return (
     <Slider
-      max={100}
-      min={1}
-      defaultValue={1}
+      max={300}
+      min={3}
+      defaultValue={3}
       isReadOnly={false}
-      flex="1"
+      flex="3"
       focusThumbOnChange={false}
       onChange={handleChange}
       onChangeEnd={onCollateralChange}
       size={"md"}
-      step={1}
+      step={3}
       colorScheme="orange"
     >
       <SliderTrack>
@@ -36,7 +36,7 @@ const CollatSlider = ({ onCollateralChange }: Props) => {
       <SliderThumb
         fontSize="sm"
         boxSize="32px"
-        children={value * 3 + "m"}
+        children={value + "m"}
         color={"orange.600"}
       />
     </Slider>

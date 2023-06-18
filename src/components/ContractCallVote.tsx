@@ -59,7 +59,11 @@ const ContractCallVote: React.FC<Props> = ({
     return null;
   }
 
-  return <Button onClick={() => vote2()}>{buttonLabel}</Button>;
+  return (
+    <Button colorScheme="orange" onClick={() => vote2()}>
+      {buttonLabel}
+    </Button>
+  );
 };
 
 export default ContractCallVote;
