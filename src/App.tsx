@@ -108,7 +108,7 @@ function App() {
                 }
               />
               <Text color="orange.600" fontSize="xl">
-                Btc-locked in sats
+                sBTC-locked in sats
               </Text>
               {/* <SliderCallNumber
                 onCollateralChange={(
@@ -172,7 +172,7 @@ function App() {
                 functionName="mint"
                 functionArgs={[
                   cpCV,
-                  uint(2100), //callQuery.expiration!.length
+                  uintCV(callQuery.expiration!.length), // uint(2100), //
                   callQuery.btclocked,
                   callQuery.strike,
                 ]} // callQuery.strike // expiration: callQuery.expiration
