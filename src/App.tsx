@@ -50,7 +50,11 @@ export interface CallQuery {
 
 function App() {
   const [callQuery, setCallQuery] = useState<CallQuery>({
-    expiration: null,
+    expiration: {
+      id: 1,
+      name: "Daily",
+      length: 144,
+    },
     btclocked: uintCV(3000000),
     strike: uintCV(1500),
   } as CallQuery);
@@ -151,7 +155,7 @@ function App() {
           <Divider />
           <CardFooter>
             <ButtonGroup spacing="6">
-              {/* <ContractCallVote
+              <ContractCallVote
                 contractAddress={cAdd}
                 contractName="sbtc"
                 functionName="mint"
@@ -161,12 +165,17 @@ function App() {
                 ]}
                 postConditions={[]}
                 buttonLabel="Free sBTC 🍊🍎"
-              /> */}
+              />
               <ContractCallVote
                 contractAddress={cAdd}
                 contractName="bitcoin-call"
                 functionName="mint"
-                functionArgs={[cpCV, callQuery.btclocked, callQuery.strike]} // callQuery.strike // expiration: callQuery.expiration
+                functionArgs={[
+                  cpCV,
+                  uint(2100), //callQuery.expiration!.length
+                  callQuery.btclocked,
+                  callQuery.strike,
+                ]} // callQuery.strike // expiration: callQuery.expiration
                 postConditions={[]}
                 buttonLabel="Mint Calls 🍊"
               />

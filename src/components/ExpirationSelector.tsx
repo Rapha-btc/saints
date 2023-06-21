@@ -6,7 +6,7 @@ import {
   MenuList,
   Spinner,
 } from "@chakra-ui/react";
-import React from "react";
+
 import { BsChevronDown } from "react-icons/bs";
 import useExpirations, { Expiration } from "../hooks/useExpirations";
 
@@ -18,12 +18,13 @@ interface Props {
 const ExpirationSelector = ({
   onSelectExpiration,
   selectedExpiration,
-}: Props) => 
-{
+}: Props) => {
   const { data, isLoading, error } = useExpirations();
 
   if (error) return null;
   if (isLoading) return <Spinner />;
+  // where do I put the logic to spit out the standard block heights?
+  //
   return (
     <Menu>
       <MenuButton as={Button} rightIcon={<BsChevronDown />}>

@@ -49,7 +49,7 @@
 ;; (define-constant SBTC_DISPLAY_FACTOR u300000)
 (define-constant SBTC_ROUND_LOT_FACTOR u3000000)
 (define-constant DISPLAY_FACTOR u100000000) ;; 100m sats = 1 btc
-(define-constant call-LENGTH u2100) ;; 2100 blocks in the future
+;; (define-constant call-LENGTH u2100) ;; 2100 blocks in the future
 
 (define-constant SBTC-PRINCIPAL 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc) ;; ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM is the 1rst address in the simulated environment
 (define-constant YIN-YANG 'SP000000000000000000002Q6VF78)
@@ -73,7 +73,7 @@
 (define-data-var next-call-id uint u0)
 (define-data-var helper-uint uint u0) ;; number of calls
 (define-data-var strike-helper uint u0) 
-(define-data-var expiration-helper uint u0)
+(define-data-var expiration-helper uint u0) ;; we don't need call-LENGTH + block-height anymore
 
 
 (define-data-var helper-list (list 100 (response uint uint)) (list ))
@@ -118,7 +118,7 @@
 ;;public and private functions
 ;;
 
-(define-public (mint (wrapped-btc-contract <wrapped-btc-trait>) (btc-locked uint) (strike-price uint)) 
+(define-public (mint (wrapped-btc-contract <wrapped-btc-trait>) (call-expire-at uint) (btc-locked uint) (strike-price uint)) 
    (let
         (
             (sbtc-get-balance (unwrap! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc get-balance tx-sender) ERROR-GETTING-BALANCE));; get the balance of the sender in the sbtc contract
@@ -136,6 +136,7 @@
         ;; so we need to use a helper function / fold / map / can someone suggest something?
         (var-set helper-uint number-of-calls)
         (var-set strike-helper strike-price)
+        (var-set expiration-helper call-expire-at)
         (var-set next-call-id (var-get last-call-id))
 
         (var-set helper-user-calls (filter is-null (map helper-quite-a-few indices)))
@@ -438,7 +439,7 @@
                     counterparty : tx-sender,
                     btc-locked : SBTC_ROUND_LOT_FACTOR, ;; this is 3m sats sBTC
                     strike-price: (var-get strike-helper),
-                    strike-height: (+ block-height call-LENGTH),
+                    strike-height: (var-get expiration-helper),
                     was-transferred-once: false ;; verify if this doesn't cause any problems
                 }
             )

@@ -1,12 +1,17 @@
 export default [
     {
     "id": 1,
-    "name": "Cycle",
-    "length": 2100 
+    "name": "Daily",
+    "length": 144 
     },
     {
     "id": 2,
-    "name": "Daily",
-    "length": 144 
+    "name": "Weekly",
+    "length": 1008
+    },
+    {
+    "id": 3,
+    "name": "Bi-weekly",
+    "length": 2100 
     },
 ];
