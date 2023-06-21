@@ -23,6 +23,7 @@
 ;;
 (define-constant ERR-INSUFFICIENT-UNDERLYING-BALANCE (err "err-insufficient-underlying-balance"))
 (define-constant ERR-STRIKE-PRICE-IS-ZERO (err "err-strike-price-cannot-be-zero"))
+(define-constant ERR-EXPIRE-IN-FUTURE (err "err-expire-in-future"))
 (define-constant ERR-QUANTITY-NOT-ROUND-LOT (err "err-quantity-not-round-lot"))
 (define-constant ERR-MIN-QUANTITY-NOT-MET (err "err-min-quantity-not-met"))
 (define-constant ERR-UNABLE-TO-TRANSFER (err u2004))
@@ -130,6 +131,7 @@
         (asserts! (is-eq (mod btc-locked SBTC_ROUND_LOT_FACTOR) u0) ERR-QUANTITY-NOT-ROUND-LOT) ;; let's print call options representing 3m sats per call, user needs to give a factor of 3m sats sBTC
         (asserts! (>= sbtc-get-balance btc-locked) ERR-INSUFFICIENT-UNDERLYING-BALANCE)
         (asserts! (> strike-price u0) ERR-STRIKE-PRICE-IS-ZERO)
+        (asserts! (> block-height call-expire-at) ERR-EXPIRE-IN-FUTURE) ;; should we have a buffer here more than 1 block?
         
         ;; now we need to mint as many NFTs as there are lots to lock
         ;; clarity doesn't support recursions
@@ -569,3 +571,47 @@
 ;; would be great to transfer a # of tokens at once if they're all the same per strike!
 ;; ;; debug the same expirations, setting the first one is pbmatic?
 ;; ;; asserting out if I've missed any in it?
+
+;; Maybe a commit-reveal scheme contract?
+;; This is a possible contract does not deal with option trading, but it should give you a rough idea of how a commit-reveal scheme could be implemented in Clarity.
+
+;; (define-map commitments
+;;   ((commitment: (buff 64)))
+;;   (
+;;     (user: principal)
+;;   )
+;; )
+
+;; (define-public (commit (hash: (buff 64)))
+;;   (let ((user tx-sender))
+;;     (map-insert commitments
+;;       {
+;;         commitment: hash
+;;       }
+;;       {
+;;         user: user
+;;       }
+;;     )
+;;   )
+;;   (ok true)
+;; )
+
+;; (define-public (reveal (secret: (buff 32)) (nonce: (buff 32)))
+;;   (let (
+;;     (hash (hash160 (concat secret nonce)))
+;;     (user tx-sender)
+;;   )
+;;     (match (map-get? commitments {commitment: hash})
+;;       entry (if (is-eq user (get user entry))
+;;         (begin
+;;           (ok "Commitment Valid and Revealed!")
+;;         )
+;;         (err "Invalid reveal")
+;;       )
+;;       (err "No matching commitment")
+;;     )
+;;   )
+;; )
+;; The commitments map stores hashes sent by users. Each hash is tied to the address that sent it.
+;; The commit function allows a user to store a hash. The user sends a 64-byte buffer as input, and the function stores the hash in the commitments map, linked to the tx-sender.
+;; The reveal function allows a user to reveal their secret (call or put). The user sends two 32-byte buffers: the original secret, and the nonce. The function hashes the concatenated secret and nonce using the hash160 function and checks if the result matches a hash in the commitments map.
