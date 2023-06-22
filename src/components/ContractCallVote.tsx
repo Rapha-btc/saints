@@ -13,6 +13,7 @@ interface Props {
   functionArgs: any[];
   postConditions: any[];
   buttonLabel: string;
+  buttoncolor: string;
 }
 
 const ContractCallVote: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const ContractCallVote: React.FC<Props> = ({
   functionArgs,
   postConditions,
   buttonLabel,
+  buttoncolor,
 }: Props) => {
   const { doContractCall } = useConnect();
 
@@ -60,7 +62,7 @@ const ContractCallVote: React.FC<Props> = ({
   }
 
   return (
-    <Button colorScheme="orange" onClick={() => vote2()}>
+    <Button colorScheme={buttoncolor} onClick={() => vote2()}>
       {buttonLabel}
     </Button>
   );

@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Connect
       authOptions={{
         appDetails: {
-          name: "Stacks React Template",
+          name: "Fountain Blue",
           // todo:
           icon: window.location.origin + "/logo.png",
         },

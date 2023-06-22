@@ -52,7 +52,7 @@ function App() {
   const [callQuery, setCallQuery] = useState<CallQuery>({
     expiration: {
       id: 1,
-      name: "Daily",
+      name: "",
       length: 144,
     },
     btclocked: uintCV(3000000),
@@ -89,17 +89,14 @@ function App() {
           borderRadius="lg"
         /> */}
             <Stack mt="6" spacing="3">
-              <Heading colorScheme="purple" size="xl">
+              <Heading colorScheme="purple" size="xl" textAlign="center">
                 sBTC call options
               </Heading>
               <Text fontSize="xs" as="em">
-                When creating a CALL, you deposit 3m sats into escrow and set a
-                strike price in STX.
-              </Text>
-              <Text fontSize="xs" as="em">
-                A CALL holder can buy these 3m sats from the contract at your
-                set price by sending the STX strike price to you. Their right to
-                do so expires after a predetermined block number.
+                When creating a CALL, you deposit 3m sats and set a strike price
+                in STX. A CALL holder can then buy these 3m sats at your set
+                price by sending you the strike price. Their right to do so
+                expires after a predetermined block number.
               </Text>
               <ExpirationSelector
                 selectedExpiration={callQuery.expiration}
@@ -107,20 +104,12 @@ function App() {
                   setCallQuery({ ...callQuery, expiration: expiration })
                 }
               />
-              <Text color="orange.600" fontSize="xl">
+              <Text fontSize="xs" as="em">
+                Select an expiration: daily, weekly, or bi-weekly.
+              </Text>
+              <Text color="orange.600" fontSize="xl" textAlign="center">
                 sBTC-locked in sats
               </Text>
-              {/* <SliderCallNumber
-                onCollateralChange={(
-                  valueAsString: string,
-                  valueAsNumber: number
-                ) =>
-                  setCallQuery({
-                    ...callQuery,
-                    btc_locked: uintCV(valueAsNumber),
-                  })
-                }
-              /> */}
               <CollatSlider
                 onCollateralChange={(valueAsNumber: number) =>
                   setCallQuery({
@@ -128,11 +117,12 @@ function App() {
                     btclocked: uintCV(valueAsNumber * 1000000),
                   })
                 }
-                // {(valueAsNumber: number) =>
-                //   console.log(valueAsNumber)
-                // }
               />
-              <Text color="blue.600" fontSize="xl">
+              <Text fontSize="xs" as="em">
+                Select total sBTC to lock, adjusting in 3m sats increments using
+                the toggle. Each increment represents a Call.
+              </Text>
+              <Text color="blue.600" fontSize="xl" textAlign="center">
                 Strike-price in stx
               </Text>
               <StrikeInput
@@ -145,11 +135,10 @@ function App() {
                     strike: uintCV(valueAsNumber),
                   })
                 }
-                // {(
-                //   valueAsString: string,
-                //   valueAsNumber: number
-                // ) => console.log(valueAsNumber)}
               />
+              <Text fontSize="xs" as="em">
+                Finally, select the STX strike price for all minted Calls.
+              </Text>
             </Stack>
           </CardBody>
           <Divider />
@@ -160,11 +149,12 @@ function App() {
                 contractName="sbtc"
                 functionName="mint"
                 functionArgs={[
-                  uint(100000000),
+                  uint(1000000000),
                   standardPrincipalCV(userAddress),
                 ]}
                 postConditions={[]}
-                buttonLabel="Free sBTC 🍊🍎"
+                buttonLabel="Free sBTC 🍊"
+                buttoncolor="orange"
               />
               <ContractCallVote
                 contractAddress={cAdd}
@@ -177,10 +167,19 @@ function App() {
                   callQuery.strike,
                 ]} // callQuery.strike // expiration: callQuery.expiration
                 postConditions={[]}
-                buttonLabel="Mint Calls 🍊"
+                buttonLabel="Mint Calls 🍎"
+                buttoncolor="blue"
               />
             </ButtonGroup>
           </CardFooter>
+          <CardBody>
+            <Text fontSize="xs" as="em">
+              Ensure parameter accuracy by double-checking each detail. If the
+              CALL options don't meet your expectations, rest assured, you can
+              cancel them, reclaiming your sBTC capital for enhanced peace of
+              mind
+            </Text>
+          </CardBody>
         </Card>
       </GridItem>
     </Grid>

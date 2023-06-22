@@ -27,7 +27,12 @@ const ExpirationSelector = ({
   //
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<BsChevronDown />}>
+      <MenuButton
+        as={Button}
+        textAlign="center"
+        colorScheme="orange"
+        rightIcon={<BsChevronDown />}
+      >
         {selectedExpiration?.name || "Expirations"}
       </MenuButton>
       <MenuList>
