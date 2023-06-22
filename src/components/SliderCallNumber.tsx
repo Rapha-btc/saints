@@ -50,6 +50,7 @@ function SliderCallNumber({ onCollateralChange }: Props) {
         onChange={handleChange2}
         size={"md"}
         step={3}
+        defaultValue={21}
       >
         <SliderTrack>
           <SliderFilledTrack />

@@ -6,6 +6,7 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   InputLeftAddon,
+  Center,
 } from "@chakra-ui/react";
 
 interface Props {
@@ -16,6 +17,7 @@ const StrikeInput = ({ onStrikeChange }: Props) => {
   return (
     <FormControl>
       <NumberInput
+        // textAlign="center"
         max={3000}
         min={750}
         defaultValue={1500}

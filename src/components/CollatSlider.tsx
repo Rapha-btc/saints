@@ -20,7 +20,7 @@ const CollatSlider = ({ onCollateralChange }: Props) => {
     <Slider
       max={300}
       min={3}
-      defaultValue={3}
+      defaultValue={150}
       isReadOnly={false}
       flex="3"
       focusThumbOnChange={false}

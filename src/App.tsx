@@ -55,7 +55,7 @@ function App() {
       name: "",
       length: 144,
     },
-    btclocked: uintCV(3000000),
+    btclocked: uintCV(21000000),
     strike: uintCV(1500),
   } as CallQuery);
   const cAdd = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
@@ -105,24 +105,9 @@ function App() {
                 }
               />
               <Text fontSize="xs" as="em">
-                Select an expiration: daily, weekly, or bi-weekly.
+                Expirations: daily, weekly and bi-weekly.
               </Text>
-              <Text color="orange.600" fontSize="xl" textAlign="center">
-                sBTC-locked in sats
-              </Text>
-              <CollatSlider
-                onCollateralChange={(valueAsNumber: number) =>
-                  setCallQuery({
-                    ...callQuery,
-                    btclocked: uintCV(valueAsNumber * 1000000),
-                  })
-                }
-              />
-              <Text fontSize="xs" as="em">
-                Select total sBTC to lock, adjusting in 3m sats increments using
-                the toggle. Each increment represents a Call.
-              </Text>
-              <Text color="blue.600" fontSize="xl" textAlign="center">
+              <Text color="blue.600" fontSize="xl">
                 Strike-price in stx
               </Text>
               <StrikeInput
@@ -137,7 +122,21 @@ function App() {
                 }
               />
               <Text fontSize="xs" as="em">
-                Finally, select the STX strike price for all minted Calls.
+                The strike price applies to all Calls.
+              </Text>
+              <Text color="orange.600" fontSize="xl">
+                sBTC-locked in sats
+              </Text>
+              <CollatSlider
+                onCollateralChange={(valueAsNumber: number) =>
+                  setCallQuery({
+                    ...callQuery,
+                    btclocked: uintCV(valueAsNumber * 1000000),
+                  })
+                }
+              />
+              <Text fontSize="xs" as="em">
+                Each increment of 3m sats represents a Call.
               </Text>
             </Stack>
           </CardBody>
@@ -174,10 +173,8 @@ function App() {
           </CardFooter>
           <CardBody>
             <Text fontSize="xs" as="em">
-              Ensure parameter accuracy by double-checking each detail. If the
-              CALL options don't meet your expectations, rest assured, you can
-              cancel them, reclaiming your sBTC capital for enhanced peace of
-              mind
+              If CALL options don't meet your expectations, you can cancel them,
+              reclaiming your sBTC-locked.
             </Text>
           </CardBody>
         </Card>
