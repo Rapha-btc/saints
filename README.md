@@ -1,7 +1,6 @@
 ![image](https://github.com/Rapha-btc/fountain-blue/assets/6700158/6f2cb56e-eb94-4f77-ba69-8d6cf8efc3fc)
 
-When creating a CALL, you deposit 3m sats into escrow and set a strike price in STX.
-A CALL holder can buy these 3m sats from the contract at your set price by sending the STX strike price to you. Their right to do so expires after a predetermined block number.
+When creating a CALL, you deposit 3m sats and set a strike price in STX. A CALL holder can then buy these 3m sats at your set price by sending you the strike price. Their right to do so expires after a predetermined block number.
 
 https://www.youtube.com/watch?v=3mj5DIqdEPQ
 

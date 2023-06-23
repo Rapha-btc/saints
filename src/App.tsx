@@ -23,6 +23,7 @@ import ContractCallVote from "./components/ContractCallVote";
 import { uint } from "@stacks/transactions/dist/cl";
 import { userSession } from "./components/ConnectWallet";
 import calloption from "./assets/call-option.jpg";
+import StandardE from "./components/standardE";
 
 import {
   trueCV,
@@ -176,6 +177,7 @@ function App() {
               If CALL options don't meet your expectations, you can cancel them,
               reclaiming your sBTC-locked.
             </Text>
+            <StandardE />
           </CardBody>
         </Card>
       </GridItem>
