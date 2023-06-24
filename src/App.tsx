@@ -154,10 +154,10 @@ function App() {
                   }
                 }}
               />
-              <ExpirationBlock
-                selectedExp={callQuery.call_expire_at}
-                onSelectExp={callQuery.expiration}
-              />
+              {callQuery.expiration && (
+                <ExpirationBlock expiration_name={callQuery.expiration.name} />
+              )}
+
               <Text color="blue.600" fontSize="xl">
                 Strike-price in stx
               </Text>

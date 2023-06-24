@@ -3,7 +3,6 @@ import axios from "axios";
 import { Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { uintCV, UIntCV } from "@stacks/transactions";
-import { Expiration } from "../hooks/useExpirations";
 
 interface Status {
   chain_tip: {
@@ -13,14 +12,13 @@ interface Status {
 }
 
 interface Props {
-  onSelectExp: Expiration | null;
-  selectedExp: UIntCV | null;
+  expiration_name: string | null;
 }
 
-const ExpirationBlock = ({ onSelectExp, selectedExp }: Props) => {
+const ExpirationBlock = ({ expiration_name }: Props) => {
   const fetchStatus = () =>
     axios
-      .get<Status>("http://localhost:3999/extended/v1/status") // "https://api.mainnet.hiro.so/extended/v1/status" http://localhost:3999/v2/info
+      .get<Status>("http://localhost:3999/extended/v1/status")
       .then((res) => res.data);
 
   const { data, error } = useQuery({
@@ -36,41 +34,34 @@ const ExpirationBlock = ({ onSelectExp, selectedExp }: Props) => {
     }
   };
 
-  //   if (error) return <Text>Something went wrong: {error.message}</Text>;
+  if (!data) {
+    return (
+      <Text fontSize="xs" as="em">
+        Error: Data is null
+      </Text>
+    );
+  }
+  if (!expiration_name) {
+    return null;
+  }
+  let blockHeight = 0;
+  if (expiration_name === "Daily") {
+    blockHeight = standardExpiration(data.chain_tip.block_height, 144);
+  } else if (expiration_name === "Weekly") {
+    blockHeight = standardExpiration(data.chain_tip.block_height, 1008);
+  } else if (expiration_name === "Bi-weekly") {
+    blockHeight = standardExpiration(data.chain_tip.block_height, 2100);
+  } else {
+    return (
+      <Text fontSize="xs" as="em">
+        Error: Invalid Expiration
+      </Text>
+    );
+  }
 
-  ////////////////////////
-  //   const getStandardExpiration = (blockHeight: number, intervalType: string) => {
-  //     const intervals: { [key: string]: number } = {
-  //       Daily: 144,
-  //       Weekly: 1008,
-  //       "Bi-weekly": 2100,
-  //     };
-
-  //     const interval = intervals[intervalType];
-
-  //     if (blockHeight < interval) return uintCV(interval);
-  //     else {
-  //       const n = Math.floor(blockHeight / interval);
-  //       return uintCV(interval * n + interval);
-  //     }
-  //   };
-
-  //   if (data && onSelectExp)
-  //     selectedExp = getStandardExpiration(
-  //       data.chain_tip.block_height,
-  //       onSelectExp.name
-  //     );
-
-  return data ? (
+  return (
     <Text fontSize="xs" as="em">
-      Daily {}
-      {standardExpiration(data.chain_tip.block_height, 144)}, weekly {}
-      {standardExpiration(data.chain_tip.block_height, 1008)} and bi-weekly {}
-      {standardExpiration(data.chain_tip.block_height, 2100)}.
-    </Text>
-  ) : (
-    <Text fontSize="xs" as="em">
-      Error: Data is null
+      Expiration Block: {blockHeight}
     </Text>
   );
 };
