@@ -17,13 +17,12 @@ import NavBar from "./components/NavBar";
 import ExpirationSelector from "./components/ExpirationSelector";
 import { Expiration } from "./hooks/useExpirations";
 import { useState } from "react";
-import SliderCallNumber from "./components/SliderCallNumber";
 import StrikeInput from "./components/StrikeInput";
 import ContractCallVote from "./components/ContractCallVote";
 import { uint } from "@stacks/transactions/dist/cl";
 import { userSession } from "./components/ConnectWallet";
 import calloption from "./assets/call-option.jpg";
-import StandardE from "./components/standardE";
+import ExpirationBlock from "./components/ExpirationBlock";
 
 import {
   trueCV,
@@ -43,19 +42,57 @@ import {
 } from "@stacks/transactions";
 import CollatSlider from "./components/CollatSlider";
 
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+interface Status {
+  chain_tip: {
+    block_height: number;
+    burn_block_height: number;
+  };
+}
+
 export interface CallQuery {
   expiration: Expiration | null;
+  call_expire_at: UIntCV | null;
   btclocked: UIntCV | null;
   strike: UIntCV | null;
 }
 
 function App() {
+  const fetchStatus = () =>
+    axios
+      .get<Status>("http://localhost:3999/extended/v1/status") // "https://api.mainnet.hiro.so/extended/v1/status" http://localhost:3999/v2/info
+      .then((res) => res.data);
+
+  const { data, error } = useQuery({
+    queryKey: ["blockHeight"],
+    queryFn: fetchStatus,
+  });
+
+  const getStandardExpiration = (blockHeight: number, intervalType: string) => {
+    const intervals: { [key: string]: number } = {
+      Daily: 144,
+      Weekly: 1008,
+      "Bi-weekly": 2100,
+    };
+
+    const interval = intervals[intervalType];
+
+    if (blockHeight < interval) return interval;
+    else {
+      const n = Math.floor(blockHeight / interval);
+      return interval * n + interval;
+    }
+  };
+  ////////////////////////
   const [callQuery, setCallQuery] = useState<CallQuery>({
     expiration: {
       id: 1,
       name: "",
       length: 144,
     },
+    call_expire_at: uintCV(144),
     btclocked: uintCV(21000000),
     strike: uintCV(1500),
   } as CallQuery);
@@ -101,13 +138,26 @@ function App() {
               </Text>
               <ExpirationSelector
                 selectedExpiration={callQuery.expiration}
-                onSelectExpiration={(expiration) =>
-                  setCallQuery({ ...callQuery, expiration: expiration })
-                }
+                onSelectExpiration={(expiration) => {
+                  if (data && data.chain_tip) {
+                    const call_expire_at = getStandardExpiration(
+                      data.chain_tip.block_height,
+                      expiration.name
+                    );
+                    setCallQuery({
+                      ...callQuery,
+                      expiration: expiration,
+                      call_expire_at: uintCV(call_expire_at),
+                    });
+                  } else {
+                    console.log("no data");
+                  }
+                }}
               />
-              <Text fontSize="xs" as="em">
-                Expirations: daily, weekly and bi-weekly.
-              </Text>
+              <ExpirationBlock
+                selectedExp={callQuery.call_expire_at}
+                onSelectExp={callQuery.expiration}
+              />
               <Text color="blue.600" fontSize="xl">
                 Strike-price in stx
               </Text>
@@ -123,7 +173,7 @@ function App() {
                 }
               />
               <Text fontSize="xs" as="em">
-                The strike price applies to all Calls.
+                Strike-price applies to all Calls.
               </Text>
               <Text color="orange.600" fontSize="xl">
                 sBTC-locked in sats
@@ -148,13 +198,10 @@ function App() {
                 contractAddress={cAdd}
                 contractName="sbtc"
                 functionName="mint"
-                functionArgs={[
-                  uint(1000000000),
-                  standardPrincipalCV(userAddress),
-                ]}
+                functionArgs={[uint(1000000), standardPrincipalCV(userAddress)]}
                 postConditions={[]}
                 buttonLabel="Free sBTC 🍊"
-                buttoncolor="orange"
+                buttoncolor="blue"
               />
               <ContractCallVote
                 contractAddress={cAdd}
@@ -162,22 +209,30 @@ function App() {
                 functionName="mint"
                 functionArgs={[
                   cpCV,
-                  uintCV(callQuery.expiration!.length), // uint(2100), //
+                  callQuery.call_expire_at, // uint(2100), //
                   callQuery.btclocked,
                   callQuery.strike,
                 ]} // callQuery.strike // expiration: callQuery.expiration
                 postConditions={[]}
                 buttonLabel="Mint Calls 🍎"
-                buttoncolor="blue"
+                buttoncolor="orange"
               />
             </ButtonGroup>
           </CardFooter>
           <CardBody>
             <Text fontSize="xs" as="em">
-              If CALL options don't meet your expectations, you can cancel them,
-              reclaiming your sBTC-locked.
+              If your CALLS aren't meeting your expectations, you do have the
+              option to cancel them, which allows you to reclaim your locked
+              sBTC. Just keep in mind that this applies only as long as your
+              CALLS are still in your possession. Once your CALLS have been
+              transferred or sold, and thus are no longer owned by you, the
+              option to cancel them is no longer available.
             </Text>
-            <StandardE />
+          </CardBody>
+          <CardBody>
+            <Text fontSize="xs" as="em">
+              Testnet sBTC has no value.
+            </Text>
           </CardBody>
         </Card>
       </GridItem>

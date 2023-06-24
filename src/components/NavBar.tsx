@@ -2,6 +2,7 @@ import { Box, Button, HStack, Image } from "@chakra-ui/react";
 import logo from "../assets/logo.webp";
 import ColorModeSwitch from "./ColorModeSwitch";
 import ConnectWallet from "./ConnectWallet";
+import StandardE from "./StandardE";
 
 const NavBar = () => {
   return (
@@ -9,6 +10,7 @@ const NavBar = () => {
       <Box>
         {/* <Image src={logo} boxSize="60px"></Image> */}
         <ColorModeSwitch />
+        <StandardE />
       </Box>
       <ConnectWallet />
     </HStack>
