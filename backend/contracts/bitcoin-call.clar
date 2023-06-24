@@ -131,7 +131,7 @@
         (asserts! (is-eq (mod btc-locked SBTC_ROUND_LOT_FACTOR) u0) ERR-QUANTITY-NOT-ROUND-LOT) ;; let's print call options representing 3m sats per call, user needs to give a factor of 3m sats sBTC
         (asserts! (>= sbtc-get-balance btc-locked) ERR-INSUFFICIENT-UNDERLYING-BALANCE)
         (asserts! (> strike-price u0) ERR-STRIKE-PRICE-IS-ZERO)
-        (asserts! (> block-height call-expire-at) ERR-EXPIRE-IN-FUTURE) ;; should we have a buffer here more than 1 block?
+        (asserts! (< block-height call-expire-at) ERR-EXPIRE-IN-FUTURE) ;; should we have a buffer here more than 1 block?
         
         ;; now we need to mint as many NFTs as there are lots to lock
         ;; clarity doesn't support recursions

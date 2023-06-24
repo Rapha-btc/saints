@@ -203,7 +203,7 @@ function App() {
                   contractName="sbtc"
                   functionName="mint"
                   functionArgs={[
-                    uint(1000000),
+                    uint(1000000000),
                     standardPrincipalCV(userAddress),
                   ]}
                   postConditions={[]}
