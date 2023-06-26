@@ -97,9 +97,9 @@ function App() {
     btclocked: uintCV(21000000),
     strike: uintCV(1500),
   } as CallQuery);
-  const cAdd = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
+  const cAdd = "ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97"; //ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
   const cpCV = contractPrincipalCV(
-    "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+    "ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97",
     "sbtc"
   );
   let userAddress = "SP000000000000000000002Q6VF78"; // I don't know if this is a good way of coding this but it works! :P
