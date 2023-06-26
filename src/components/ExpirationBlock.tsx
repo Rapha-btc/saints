@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 import { Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";

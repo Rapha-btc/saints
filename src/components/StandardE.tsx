@@ -13,7 +13,7 @@ interface Status {
 const StandardE = () => {
   const fetchStatus = () =>
     axios
-      .get<Status>("http://localhost:3999/extended/v1/status") // "https://api.mainnet.hiro.so/extended/v1/status" http://localhost:3999/v2/info
+      .get<Status>("https://api.testnet.hiro.so/extended/v1/status") // http://localhost:3999/extended/v1/status" "https://api.mainnet.hiro.so/extended/v1/status" http://localhost:3999/v2/info
       .then((res) => res.data);
 
   const { data, error } = useQuery({
