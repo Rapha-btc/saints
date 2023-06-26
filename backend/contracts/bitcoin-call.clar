@@ -52,7 +52,7 @@
 (define-constant DISPLAY_FACTOR u100000000) ;; 100m sats = 1 btc
 ;; (define-constant call-LENGTH u2100) ;; 2100 blocks in the future
 
-(define-constant SBTC-PRINCIPAL 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc) ;; ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM is the 1rst address in the simulated environment
+(define-constant SBTC-PRINCIPAL 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc) ;; ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM is the 1rst address in the simulated environment // ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97 in testnet
 (define-constant YIN-YANG 'SP000000000000000000002Q6VF78)
 
 (define-constant indices
