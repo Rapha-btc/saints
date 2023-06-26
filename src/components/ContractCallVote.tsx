@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useConnect } from "@stacks/connect-react";
-import { StacksMocknet } from "@stacks/network";
+// import { StacksMocknet } from "@stacks/network";
+import { StacksTestnet } from "@stacks/network";
 import { AnchorMode, PostConditionMode } from "@stacks/transactions";
 import { userSession } from "./ConnectWallet";
 
@@ -32,7 +33,8 @@ const ContractCallVote: React.FC<Props> = ({
 
   function vote2() {
     doContractCall({
-      network: new StacksMocknet(),
+      // network: new StacksMocknet(),
+      network: new StacksTestnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: contractAddress,
       contractName: contractName,
@@ -45,7 +47,7 @@ const ContractCallVote: React.FC<Props> = ({
         if (typeof window !== "undefined" && data.txId) {
           window
             .open(
-              `https://explorer.hiro.so/txid/${data.txId}?api=http://localhost:3999`,
+              `https://explorer.stacks.co/txid/${data.txId}?chain=testnet`, // `https://explorer.hiro.so/txid/${data.txId}?api=http://localhost:3999`,
               "_blank"
             )
             ?.focus();
