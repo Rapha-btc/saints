@@ -199,7 +199,7 @@ function App() {
             <CardFooter>
               <ButtonGroup spacing="6">
                 <ContractCallVote
-                  contractAddress={userAddress}
+                  contractAddress={cAdd}
                   contractName="sbtc"
                   functionName="mint"
                   functionArgs={[
@@ -211,7 +211,7 @@ function App() {
                   buttoncolor="blue"
                 />
                 <ContractCallVote
-                  contractAddress={userAddress}
+                  contractAddress={cAdd}
                   contractName="bitcoin-call"
                   functionName="mint"
                   functionArgs={[
