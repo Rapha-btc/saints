@@ -1,5 +1,5 @@
-(use-trait wrapped-btc-trait .sip010-ft-trait.sip010-ft-trait) ;; any wrapped btc that is a sip-10 token can be collateralized, and we are testing it here with sbtc.clar but I should have called it not-not-btc.clar in reference to Doctor $uss cultural meme
-(impl-trait .sip009-nft-trait.sip009-nft-trait) ;; covered-calls are nfts + a map
+(use-trait wrapped-btc-trait 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.sip-010-trait);; any wrapped btc that is a sip-10 token can be collateralized
+(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait) ;; covered-calls are nfts + a map
 ;; title: sizeable-bitcoin-call.clar
 ;; version 1
 ;; let's take the code from bitcoin-call, and now add the possibility for a user to 
@@ -119,7 +119,7 @@
 ;;public and private functions
 ;;
 
-(define-public (mint (wrapped-btc-contract <wrapped-btc-trait>) (call-expire-at uint) (btc-locked uint) (strike-price uint)) 
+(define-public (mint (wrapped-btc-contract <wrapped-btc-trait>) (call-expire-at uint) (strike-price uint) (btc-locked uint)) 
    (let
         (
             (sbtc-get-balance (unwrap! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc get-balance tx-sender) ERROR-GETTING-BALANCE));; get the balance of the sender in the sbtc contract

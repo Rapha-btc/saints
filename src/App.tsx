@@ -217,8 +217,8 @@ function App() {
                   functionArgs={[
                     cpCV,
                     callQuery.call_expire_at, // uint(2100), //
-                    callQuery.btclocked,
                     callQuery.strike,
+                    callQuery.btclocked,
                   ]} // callQuery.strike // expiration: callQuery.expiration
                   postConditions={[]}
                   buttonLabel="Mint Calls 🍎"

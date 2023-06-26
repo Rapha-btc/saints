@@ -4,7 +4,12 @@ description = ''
 authors = []
 telemetry = true
 cache_dir = './.cache'
-requirements = []
+
+[[project.requirements]]
+contract_id = 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait'
+
+[[project.requirements]]
+contract_id = 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard'
 [contracts.bitcoin-call]
 path = 'contracts/bitcoin-call.clar'
 clarity_version = 2
@@ -14,18 +19,6 @@ epoch = 2.1
 path = 'contracts/sbtc.clar'
 clarity_version = 2
 epoch = 2.1
-
-[contracts.sip009-nft-trait]
-path = 'contracts/sip009-nft-trait.clar'
-clarity_version = 2
-epoch = 2.1
-
-[contracts.sip010-ft-trait]
-path = 'contracts/sip010-ft-trait.clar'
-clarity_version = 2
-epoch = 2.1
-[repl.analysis]
-passes = ['check_checker']
 
 [repl.analysis.check_checker]
 strict = false

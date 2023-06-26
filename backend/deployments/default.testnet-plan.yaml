@@ -1,0 +1,52 @@
+---
+id: 0
+name: Testnet deployment
+network: testnet
+stacks-node: "https://api.testnet.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoind.testnet.stacks.co:18332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - requirement-publish:
+            contract-id: SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait
+            remap-sender: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            remap-principals:
+              SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            cost: 4680
+            path: "./.cache/requirements/SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.clar"
+            clarity-version: 1
+        - requirement-publish:
+            contract-id: SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard
+            remap-sender: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            remap-principals:
+              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            cost: 8400
+            path: "./.cache/requirements/SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
+            clarity-version: 1
+        - contract-publish:
+            contract-name: bitcoin-call
+            expected-sender: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            cost: 769527769
+            path: contracts/bitcoin-call.clar
+            anchor-block-only: true
+            clarity-version: 2
+        - contract-publish:
+            contract-name: sbtc
+            expected-sender: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            cost: 367345222
+            path: contracts/sbtc.clar
+            anchor-block-only: true
+            clarity-version: 2
+      epoch: "2.0"
+    - id: 1
+      transactions:
+        - contract-call:
+            contract-id: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc
+            expected-sender: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
+            method: mint
+            parameters:
+              - u100000000
+              - "'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97"
+            cost: 925960
+      epoch: "2.1"
