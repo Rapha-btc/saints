@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import { Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { uintCV, UIntCV } from "@stacks/transactions";
 
 interface Status {
   chain_tip: {
@@ -18,7 +17,7 @@ interface Props {
 const ExpirationBlock = ({ expiration_name }: Props) => {
   const fetchStatus = () =>
     axios
-      .get<Status>("http://localhost:3999/extended/v1/status")
+      .get<Status>("https://api.testnet.hiro.so/extended/v1/status") // https://api.testnet.hiro.so/extended/v1/address/{principal}/balances http://localhost:3999/extended/v1/status
       .then((res) => res.data);
 
   const { data, error } = useQuery({
