@@ -47,7 +47,7 @@ const ContractCallVote: React.FC<Props> = ({
         if (typeof window !== "undefined" && data.txId) {
           window
             .open(
-              `https://explorer.stacks.co/txid/${data.txId}?chain=testnet`, // `https://explorer.hiro.so/txid/${data.txId}?api=http://localhost:3999`,
+              `https://explorer.stacks.co/txid/0x${data.txId}?chain=testnet`, // `https://explorer.hiro.so/txid/${data.txId}?api=http://localhost:3999`,
               "_blank"
             )
             ?.focus();
