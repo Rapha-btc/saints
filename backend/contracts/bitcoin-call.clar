@@ -21,6 +21,7 @@
 
 ;; constants
 ;;
+
 (define-constant ERR-INSUFFICIENT-UNDERLYING-BALANCE (err "err-insufficient-underlying-balance"))
 (define-constant ERR-STRIKE-PRICE-IS-ZERO (err "err-strike-price-cannot-be-zero"))
 (define-constant ERR-EXPIRE-IN-FUTURE (err "err-expire-in-future"))
@@ -52,7 +53,11 @@
 (define-constant DISPLAY_FACTOR u100000000) ;; 100m sats = 1 btc
 ;; (define-constant call-LENGTH u2100) ;; 2100 blocks in the future
 
-(define-constant SBTC-PRINCIPAL 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc) ;; ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM is the 1rst address in the simulated environment // ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97 in testnet
+;; (define-constant SBTC-PRINCIPAL'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc ) ;; ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM is the 1rst address in the simulated environment // ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97 in testnet
+(define-constant DEPLOYER tx-sender)
+(define-constant SBTC-PRINCIPAL tx-sender) ;; (concat DEPLOYER ".sbtc"))
+;; this (concat DEPLOYER ".sbtc") doesn't work... do I need to call the bitcoin-call contract from the sbtc contract at deployment and then store that contract as my SBTC-PRINCIPAL constant then?
+
 (define-constant YIN-YANG 'SP000000000000000000002Q6VF78)
 
 (define-constant indices
@@ -79,7 +84,6 @@
 
 (define-data-var helper-list (list 100 (response uint uint)) (list ))
 (define-data-var helper-user-calls (list 100 (response uint uint)) (list )) ;; this is a helper
-(define-data-var helper-btc-contract principal SBTC-PRINCIPAL) ;; this is the principal of the contract that holds the underlying asset
 
 (define-data-var helper-sender principal YIN-YANG)
 (define-data-var helper-recipient principal YIN-YANG)
@@ -180,7 +184,7 @@
             (stx-balance (stx-get-balance tx-sender))
         )
         
-        ;; (asserts! (is-eq (contract-of wrapped-btc-contract) SBTC-PRINCIPAL) ERR-INVALID-PRINCIPAL);; only the contract owner can call this function, well the NFT owner should be able to do so?
+        ;; (asserts! (is-eq (contract-of wrapped-btc-contract) 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc) ERR-INVALID-PRINCIPAL);; only the contract owner can call this function, well the NFT owner should be able to do so?
         (asserts! (is-eq (unwrap! (nft-get-owner? bitcoin-call token-id) ERR-TOKEN-ID-NOT-FOUND) tx-sender) ERR-NOT-TOKEN-OWNER) ;; only the owner of the call can exercise it
         (asserts! (>= strike-height block-height) ERR-TOKEN-EXPIRED) ;; the call expires and can be exercised only before the strike date
         (asserts! (>=  stx-balance strike-price) ERR-INSUFFICIENT-CAPITAL-TO-EXERCISE)
@@ -210,7 +214,6 @@
             ;; the expired ones don't need to be in exerciser-calls for "exercisable calls"
             (exercise-em-all (asserts! (fold check-exercise exos true) (err "err-exercising-all"))) ;; I don't know if this appropriate but it seems to work :P)
         )
-        ;; (var-set helper-btc-contract wrapped-btc-contract) ;; it's already the good principal and throws an error here for the trait?!
         
         ;; (map-set exerciser-calls tx-sender {exos: next-exos})
         (map-delete exerciser-calls tx-sender)
@@ -417,8 +420,8 @@
     (map-get? call-data current))) block-height) ;; if block-height is less than striek-height then exercise and spit true, else just spit true
     (if result 
     (let 
-    ((result-mint-i (exercise SBTC-PRINCIPAL current))) ;; this never returns an error/none/or false because exercise exits control flow if there's an error
-    ;; (var-get helper-btc-contract)
+    ((result-mint-i (exercise 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc current))) ;; this never returns an error/none/or false because exercise exits control flow if there's an error
+
     (if (is-ok result-mint-i) true false) ;; hence this is always true? but if it returns false, there is no change to the logic and the exit is taken care inside the exercise function
     ;; thought of changing the functioning of this if false arrives at any point but seems unnecessary?
     ;; and then exit control flow in main function if false is the final result
@@ -524,10 +527,8 @@
     )    
 )
 
-;; (define-data-var sBTC-contract-helper <wrapped-btc-trait> SBTC-PRINCIPAL)
 ;; error: trait references can not be stored
 ;; x 1 error detected
-(define-data-var sBTC-contract-helper principal SBTC-PRINCIPAL)
 
 (define-private (reclaim (token-id uint) (result bool))
     (begin
@@ -542,7 +543,7 @@
         (if result
             (let 
                 (
-                (result-reclaim-token (counterparty-reclaim SBTC-PRINCIPAL token-id)) ;; I call the counterparty-reclaim 
+                (result-reclaim-token (counterparty-reclaim 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc token-id)) ;; I call the counterparty-reclaim 
                 )
                 true
             )
