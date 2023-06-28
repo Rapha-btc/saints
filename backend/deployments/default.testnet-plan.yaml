@@ -9,35 +9,38 @@ plan:
     - id: 0
       transactions:
         - requirement-publish:
-            contract-id: SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait
-            remap-sender: ST1S9JG5AV9Q4ZRJ3DSKM6C3XX2XP9HBE865W7XDN
+            contract-id: ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.nft-trait
+            remap-sender: ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y
             remap-principals:
-              SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9: ST1S9JG5AV9Q4ZRJ3DSKM6C3XX2XP9HBE865W7XDN
-            cost: 4680
-            path: "./.cache/requirements/SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.clar"
-            clarity-version: 1
-        - requirement-publish:
-            contract-id: SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard
-            remap-sender: ST1S9JG5AV9Q4ZRJ3DSKM6C3XX2XP9HBE865W7XDN
-            remap-principals:
-              SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE: ST1S9JG5AV9Q4ZRJ3DSKM6C3XX2XP9HBE865W7XDN
-            cost: 8400
-            path: "./.cache/requirements/SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
+              ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT: ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y
+            cost: 4670
+            path: "./.cache/requirements/ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.nft-trait.clar"
             clarity-version: 1
       epoch: "2.0"
     - id: 1
       transactions:
+        - requirement-publish:
+            contract-id: ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.sip-010-trait-ft-standard
+            remap-sender: ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y
+            remap-principals:
+              ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT: ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y
+            cost: 8390
+            path: "./.cache/requirements/ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.sip-010-trait-ft-standard.clar"
+            clarity-version: 1
+      epoch: "2.05"
+    - id: 2
+      transactions:
         - contract-publish:
             contract-name: sbtc
-            expected-sender: ST1S9JG5AV9Q4ZRJ3DSKM6C3XX2XP9HBE865W7XDN
-            cost: 274943085
+            expected-sender: ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y
+            cost: 262596027
             path: contracts/sbtc.clar
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: bitcoin-call
-            expected-sender: ST1S9JG5AV9Q4ZRJ3DSKM6C3XX2XP9HBE865W7XDN
-            cost: 276376250
+            expected-sender: ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y
+            cost: 263964745
             path: contracts/bitcoin-call.clar
             anchor-block-only: true
             clarity-version: 2

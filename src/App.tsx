@@ -63,7 +63,7 @@ export interface CallQuery {
 function App() {
   const fetchStatus = () =>
     axios
-      .get<Status>("http://localhost:3999/extended/v1/status") // "https://api.mainnet.hiro.so/extended/v1/status" http://localhost:3999/v2/info
+      .get<Status>("https://api.testnet.hiro.so/extended/v1/status") // http://localhost:3999/extended/v1/status" "https://api.mainnet.hiro.so/extended/v1/status" http://localhost:3999/v2/info
       .then((res) => res.data);
 
   const { data, error } = useQuery({
@@ -97,9 +97,9 @@ function App() {
     btclocked: uintCV(21000000),
     strike: uintCV(1500),
   } as CallQuery);
-  const cAdd = "ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97"; //ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+  const cAdd = "ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y"; //ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
   const cpCV = contractPrincipalCV(
-    "ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97",
+    "ST2X4BFEK97FA209N6KNNV0WDEWB4TGY9X03P1H9Y",
     "sbtc"
   );
   let userAddress = "SP000000000000000000002Q6VF78"; // I don't know if this is a good way of coding this but it works! :P

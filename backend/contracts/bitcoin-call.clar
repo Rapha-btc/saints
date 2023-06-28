@@ -34,7 +34,7 @@
 (define-constant SBTC_ROUND_LOT_FACTOR u3000000)
 (define-constant DISPLAY_FACTOR u100000000) ;; 100m sats = 1 btc
 (define-constant DEPLOYER tx-sender)
-(define-constant YIN-YANG 'SP000000000000000000002Q6VF78)
+(define-constant YIN-YANG 'ST000000000000000000002AMW42H) ;; ST000000000000000000002AMW42H ;; SP000000000000000000002Q6VF78
 (define-constant indices
   (list
     u1 u2 u3 u4 u5 u6 u7 u8 u9 u10
@@ -84,7 +84,7 @@
 (define-public (mint (call-expire-at uint) (strike-price uint) (btc-locked uint)) 
    (let
         (
-            (sbtc-get-balance (unwrap! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc get-balance tx-sender) ERROR-GETTING-BALANCE))
+            (sbtc-get-balance (unwrap! (contract-call? .sbtc get-balance tx-sender) ERROR-GETTING-BALANCE))
             (number-of-calls (/ btc-locked SBTC_ROUND_LOT_FACTOR))
             
             (counter-calls (get-reclaimable-calls tx-sender))
