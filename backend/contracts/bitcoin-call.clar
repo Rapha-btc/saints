@@ -2,8 +2,7 @@
 ;; title: bitcoin-call.clar
 ;; version 1
 ;; let's add the possibility for a user to 
-;; print 100 call options of 3m sats each, at a strike price measure and exercised in STX
-;; MEV concerns for this project - fingers crossed blockchain engineers at work on Stakcs!
+;; print 100 call options of 3m sats each, at a strike price exercised in STX
 
 ;; constants
 ;;
@@ -427,3 +426,7 @@
         (ok reclaim-em-all)
     )
 )
+;; Next -> MEV: Can we create a fail-safe "valve mechanism" to prevent these rare situations, without depending on an oracle or a centralized authority? 
+;; The mechanism would involve identifying ITM options using an oracle and triggering a secure settlement process if they are not exercised.
+;; use BTC-STX oracle built-in Clarity via PoX. Get real-time exchange rates/block & use as settlement oracle
+;; or DeepLake
