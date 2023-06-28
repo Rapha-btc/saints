@@ -57,6 +57,8 @@ plan:
             emulated-sender: SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE
             path: "./.cache/requirements/SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.clar"
             clarity-version: 1
+      epoch: "2.0"
+    - id: 1
       transactions:
         - emulated-contract-publish:
             contract-name: sbtc
@@ -68,11 +70,4 @@ plan:
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/bitcoin-call.clar
             clarity-version: 2
-        -emulated-contract-call:
-          contract-id: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc
-          expected-sender: ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97
-          method: mint
-          parameters:
-            - u100000000
-            - "'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97"
-      epoch: "2.0"
+      epoch: "2.1"

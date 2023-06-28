@@ -1,27 +1,12 @@
-(use-trait wrapped-btc-trait 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.sip-010-trait);; any wrapped btc that is a sip-10 token can be collateralized
 (impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait) ;; covered-calls are nfts + a map
-;; title: sizeable-bitcoin-call.clar
+;; title: bitcoin-call.clar
 ;; version 1
-;; let's take the code from bitcoin-call, and now add the possibility for a user to 
+;; let's add the possibility for a user to 
 ;; print 100 call options of 3m sats each, at a strike price measure and exercised in STX
 ;; MEV concerns for this project - fingers crossed blockchain engineers at work on Stakcs!
 
-;; so the user has 3 bitcoin in the form of a wraped-btc-trait, and decides to lock them in this contract to receive 100 bitcoin calls
-;; in the form of a "bitcoin-call" NFT from this contract
-
-;; Idea from Rafa at the airport while waiting a flight:
-;; A private function called helper-quite-a-few that takes a number N between 1 and 100 
-;; and spits out 0 if item is above number N, and last-token-Id + item otherwise. 
-;; Map quite-a-few u1, u2, u100
-;; Spits out last token id + 1, last token id + 2, last token id + N, u0 ... u0
-;; and perform the set mapping / deleting + token burning
-
-;; token definitions
-;; 
-
 ;; constants
 ;;
-
 (define-constant ERR-INSUFFICIENT-UNDERLYING-BALANCE (err "err-insufficient-underlying-balance"))
 (define-constant ERR-STRIKE-PRICE-IS-ZERO (err "err-strike-price-cannot-be-zero"))
 (define-constant ERR-EXPIRE-IN-FUTURE (err "err-expire-in-future"))
@@ -36,8 +21,7 @@
 (define-constant ERR-TOO-MANY-CALLS (err "err-too-many-calls")) 
 (define-constant ERR-TOO-MANY-CALLS-2 (err u2008)) 
 (define-constant ERR-NO-EXERCISER-CALLS (err u2009))
-
-(define-constant ERR-TOKEN-ID-NOT-FOUND (err u1007)) ;; clarity wants the same type in all path which is something I am trying to get familiar with
+(define-constant ERR-TOKEN-ID-NOT-FOUND (err u1007)) 
 (define-constant ERR-INVALID-PRINCIPAL (err u1008))
 (define-constant ERR-TOKEN-EXPIRED (err u1009))
 (define-constant ERR-INSUFFICIENT-CAPITAL-TO-EXERCISE (err u1010)) 
@@ -47,19 +31,10 @@
 (define-constant ERR-IN-RECLAIM-CAPITAL (err u1014))
 (define-constant ERR-NFT-OWNER (err u1015))
 (define-constant ERR-NO-CONTRACT (err u1016))
-
-;; (define-constant SBTC_DISPLAY_FACTOR u300000)
 (define-constant SBTC_ROUND_LOT_FACTOR u3000000)
 (define-constant DISPLAY_FACTOR u100000000) ;; 100m sats = 1 btc
-;; (define-constant call-LENGTH u2100) ;; 2100 blocks in the future
-
-;; (define-constant SBTC-PRINCIPAL'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc ) ;; ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM is the 1rst address in the simulated environment // ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97 in testnet
 (define-constant DEPLOYER tx-sender)
-(define-constant SBTC-PRINCIPAL tx-sender) ;; (concat DEPLOYER ".sbtc"))
-;; this (concat DEPLOYER ".sbtc") doesn't work... do I need to call the bitcoin-call contract from the sbtc contract at deployment and then store that contract as my SBTC-PRINCIPAL constant then?
-
 (define-constant YIN-YANG 'SP000000000000000000002Q6VF78)
-
 (define-constant indices
   (list
     u1 u2 u3 u4 u5 u6 u7 u8 u9 u10
@@ -77,101 +52,71 @@
 ;;
 (define-data-var last-call-id uint u0)
 (define-data-var next-call-id uint u0)
-(define-data-var helper-uint uint u0) ;; number of calls
+(define-data-var helper-uint uint u0)
 (define-data-var strike-helper uint u0) 
-(define-data-var expiration-helper uint u0) ;; we don't need call-LENGTH + block-height anymore
-
-
+(define-data-var expiration-helper uint u0)
 (define-data-var helper-list (list 100 (response uint uint)) (list ))
-(define-data-var helper-user-calls (list 100 (response uint uint)) (list )) ;; this is a helper
-
+(define-data-var helper-user-calls (list 100 (response uint uint)) (list )) 
 (define-data-var helper-sender principal YIN-YANG)
 (define-data-var helper-recipient principal YIN-YANG)
 
-;; maybe they should be able to buy a whole bunch at once?
+;; NFT definition
+;;
+(define-non-fungible-token bitcoin-call uint) ;; a bitcoin call is represented by an NFT token id bitcoin-call and data stored in call-data map
 
-;; a sizeable-bitcoin call is represented by an NFT token id bitcoin-call and data stored in call-data map
-(define-non-fungible-token bitcoin-call uint) ;; a 'call' is simply an NFT that represents the right to buy 3m sats at a strike date in 2100 blocks for a strike price of 1000 stx
 ;; data maps
 ;;
-
-;; this is for Mom:
-;; when you create the CALL, you send the 3 million Bitcoin satoshis to the contract which will hold it in escrow
-;; at the same time you define the price in STX at which anyone who has the CALL can buy these 3 million satoshis at the predetermined STX price
-;; if someone owns this CALL, it gives them the right to receive these 3 million satoshis from the contract where it is escrowed
-;; in exchange for them sending the price in STX to the creator of this CALL 
-;; this right expires after 2100 blocks + block height of creation
-
-;; if you buy this NFT, you protect yourself from price of STX going down versus bitcoin
-(define-map call-data uint { 
+(define-map call-data uint { ;; if you buy this NFT, you protect yourself from price of STX going down versus Bitcoin
         counterparty: principal,
-        btc-locked: uint, ;; this is always 3m sats sBTC 0.03 000 000
-        strike-price: uint, ;; 0.00 002 BTC/STX 1000 stx? 950 stx? protect me against a drop below 950 stx per 3m sats sBTC
-        strike-height: uint, ;; this right that you have if you own this Bitcoin call NFT expires
-        was-transferred-once: bool ;; this is to keep track of whether we have the token-id in a buyer-call list or not?
+        btc-locked: uint, 
+        strike-price: uint, 
+        strike-height: uint, 
+        was-transferred-once: bool
     }
 )
-;; define a map called exos where the key is a principal and the value is a list of uints of maximum lenght 100
-(define-map exerciser-calls principal {exos: (list 100 uint)}) ;; a list of calls owned by a user who is not a counterparty of these token-ids
-;; a list of calls owned by a user who is not a counterparty of these token-ids
-;; this above should be called exercisable-calls... and sizable instead of sizeable :P
 
-;; let's create a list of reclaimable for the counterparty so they can reclaim their capital in one go!
-(define-map reclaimable-calls principal {reclaimable: (list 100 uint)}) ;; a list of calls owned by a user who is not a counterparty of these token-ids
-;; this is added only when it is minted!
+(define-map exerciser-calls principal {exos: (list 100 uint)}) ;; a list of calls owned by a user who is not a counterparty of these token-ids
+;; this above should be called exercisable-calls...
+(define-map reclaimable-calls principal {reclaimable: (list 100 uint)}) ;; a list of reclaimable for the counterparty so they can reclaim their capital in one go!
 
 ;;public and private functions
 ;;
-
-(define-public (mint (wrapped-btc-contract <wrapped-btc-trait>) (call-expire-at uint) (strike-price uint) (btc-locked uint)) 
+(define-public (mint (call-expire-at uint) (strike-price uint) (btc-locked uint)) 
    (let
         (
-            (sbtc-get-balance (unwrap! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc get-balance tx-sender) ERROR-GETTING-BALANCE));; get the balance of the sender in the sbtc contract
+            (sbtc-get-balance (unwrap! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc get-balance tx-sender) ERROR-GETTING-BALANCE))
             (number-of-calls (/ btc-locked SBTC_ROUND_LOT_FACTOR))
             
-            (counter-calls (get-reclaimable-calls tx-sender)) ;; get the reclaimable calls of the counterparty
+            (counter-calls (get-reclaimable-calls tx-sender))
         )
-        (asserts! (>= btc-locked SBTC_ROUND_LOT_FACTOR) ERR-MIN-QUANTITY-NOT-MET) ;; modulo will return the tested number if it is lesser than the divider, hence exit in that case 
-        (asserts! (is-eq (mod btc-locked SBTC_ROUND_LOT_FACTOR) u0) ERR-QUANTITY-NOT-ROUND-LOT) ;; let's print call options representing 3m sats per call, user needs to give a factor of 3m sats sBTC
+        (asserts! (>= btc-locked SBTC_ROUND_LOT_FACTOR) ERR-MIN-QUANTITY-NOT-MET) 
+        (asserts! (is-eq (mod btc-locked SBTC_ROUND_LOT_FACTOR) u0) ERR-QUANTITY-NOT-ROUND-LOT) 
         (asserts! (>= sbtc-get-balance btc-locked) ERR-INSUFFICIENT-UNDERLYING-BALANCE)
         (asserts! (> strike-price u0) ERR-STRIKE-PRICE-IS-ZERO)
         (asserts! (< block-height call-expire-at) ERR-EXPIRE-IN-FUTURE) ;; should we have a buffer here more than 1 block?
-        
-        ;; now we need to mint as many NFTs as there are lots to lock
-        ;; clarity doesn't support recursions
-        ;; so we need to use a helper function / fold / map / can someone suggest something?
         (var-set helper-uint number-of-calls)
         (var-set strike-helper strike-price)
         (var-set expiration-helper call-expire-at)
         (var-set next-call-id (var-get last-call-id))
+        (var-set helper-user-calls (filter is-null (map helper-quite-a-few indices))) ;; (map helper-quite-a-few indices) can spit out an error, and it actually doesn't exit control flow, 
 
-        (var-set helper-user-calls (filter is-null (map helper-quite-a-few indices)))
-
-        ;; (map helper-quite-a-few indices) can spit out an error
-        ;; and it actually doesn't exit control flow, 
-        ;; it spits an error in the list and goes on to the next item
-        ;; here we asserts over the fold and exit all of the operations here if it fails
-
-        ;; now we exit control flow if any of these nft-mintSSS? calls failed!
+        ;; now we exit control flow if any of these nft-mints failed
         (asserts! (is-ok (fold check-minting-err (var-get helper-user-calls) (ok u0))) (err "unable-to-mint"))
-        
 
-        (if (is-eq counter-calls (list ));; this spits out a list of call options token ids and updates the next-call-id
+        (if (is-eq counter-calls (list )) ;; this spits out a list of call options token ids and updates the next-call-id
             (map-set reclaimable-calls tx-sender {reclaimable: (map pour-unwrapper (var-get helper-user-calls))})
             (map-set reclaimable-calls tx-sender {reclaimable: (unwrap! (as-max-len? (concat counter-calls (map pour-unwrapper (var-get helper-user-calls))) u100) ERR-TOO-MANY-CALLS)})
         )
-        
 
-        ;; outside of the loop, lock all the capital at once;; outside of the while loop, increment as many number-of-calls
-        (unwrap! (contract-call? wrapped-btc-contract transfer btc-locked tx-sender (as-contract tx-sender) none) ERR-UNABLE-TO-LOCK-UNDERLYING-ASSET) 
+        ;; outside of the loop, lock all the capital at once, as many number-of-calls
+        (unwrap! (contract-call? .sbtc transfer btc-locked tx-sender (as-contract tx-sender) none) ERR-UNABLE-TO-LOCK-UNDERLYING-ASSET) 
 
-        (var-set last-call-id (var-get next-call-id)) ;; this allows me to keep track of the last call id 
-
+        (var-set last-call-id (var-get next-call-id)) 
         (ok (get-reclaimable-calls tx-sender))
     )
 )
 
-(define-public (exercise (wrapped-btc-contract <wrapped-btc-trait>) (token-id uint))
+(define-public (exercise (token-id uint))
     (let 
         (
             (call-info (unwrap! (get-call-data token-id) ERR-TOKEN-ID-NOT-FOUND))
@@ -179,70 +124,49 @@
             (btc-locked (get btc-locked call-info))
             (strike-height (get strike-height call-info))
             (strike-price (get strike-price call-info))
-            ;; (exercise-quantity-stx (* (/ btc-locked DISPLAY_FACTOR) strike-price)) ;; price = STX / BTC, so this gives me some STX
             (owner tx-sender) ;; the owner exercises the option, and the counterparty complies
             (stx-balance (stx-get-balance tx-sender))
         )
-        
-        ;; (asserts! (is-eq (contract-of wrapped-btc-contract) 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc) ERR-INVALID-PRINCIPAL);; only the contract owner can call this function, well the NFT owner should be able to do so?
-        (asserts! (is-eq (unwrap! (nft-get-owner? bitcoin-call token-id) ERR-TOKEN-ID-NOT-FOUND) tx-sender) ERR-NOT-TOKEN-OWNER) ;; only the owner of the call can exercise it
-        (asserts! (>= strike-height block-height) ERR-TOKEN-EXPIRED) ;; the call expires and can be exercised only before the strike date
+        (asserts! (is-eq (unwrap! (nft-get-owner? bitcoin-call token-id) ERR-TOKEN-ID-NOT-FOUND) tx-sender) ERR-NOT-TOKEN-OWNER) 
+        (asserts! (>= strike-height block-height) ERR-TOKEN-EXPIRED) 
         (asserts! (>=  stx-balance strike-price) ERR-INSUFFICIENT-CAPITAL-TO-EXERCISE)
-        ;; if asserts returns an error it exits the control flow
 
-        ;; (unwrap-panic (contract-call? wrapped-btc-contract get-balance tx-sender))
-
-        ;; owner gets sBTC, counterparty gets STX => hence it's a call option
-        (try! (as-contract (contract-call? wrapped-btc-contract transfer btc-locked tx-sender owner none))) ;; the bitcoin-call contract has the sbtc balance and sends it to the owner
-        (try! (stx-transfer? strike-price owner counterparty)) ;; the owner sends the STX to the counterparty
-        ;; if try is an error or none it exits the control flow
+        ;; owner gets sBTC, counterparty gets STX, hence it's a call option
+        (try! (as-contract (contract-call? .sbtc transfer btc-locked tx-sender owner none))) 
+        (try! (stx-transfer? strike-price owner counterparty))
         
         ;; burn the call
         (try! (nft-burn? bitcoin-call token-id tx-sender))
-        (ok (map-delete call-data token-id)) ;; this cannot return false because call-info in let would have thrown an error and exit if call-data token-id doesn't exist
+        (ok (map-delete call-data token-id)) 
     )
 )
 
-(define-public (exercise-all-of-my-exerciser-calls (wrapped-btc-contract <wrapped-btc-trait>))
+(define-public (exercise-all-of-my-exerciser-calls)
     (let 
         (
             (tx-exerciser-calls (unwrap! (map-get? exerciser-calls tx-sender) (err "err-no-exercisable-calls")))
             (exos (get exos tx-exerciser-calls))
-            ;; (next-exos (list ))
-
-            ;; maybe we need to filter out the calls that have expired here before folding them all?
-            ;; the expired ones don't need to be in exerciser-calls for "exercisable calls"
-            (exercise-em-all (asserts! (fold check-exercise exos true) (err "err-exercising-all"))) ;; I don't know if this appropriate but it seems to work :P)
+            (exercise-em-all (asserts! (fold check-exercise exos true) (err "err-exercising-all"))) ;; double check this with auditor 
         )
-        
-        ;; (map-set exerciser-calls tx-sender {exos: next-exos})
         (map-delete exerciser-calls tx-sender)
-        ;; (ok (var-get next-exos))
-        ;; (ok mint-em-all)
         (ok tx-exerciser-calls)
     )
 )
-;; I don't know what unchecked data is, probably not tested - #[allow(unchecked_data)]
+
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
-        ;; let's fetch was-transfered-once from the call-data
         (let 
             (
-                (recipient-calls (default-to {exos: (list )} (map-get? exerciser-calls recipient))) ;; i default to list u0...
+                (recipient-calls (default-to {exos: (list )} (map-get? exerciser-calls recipient)))
                 (recipient-exos (get exos recipient-calls))
                 (next-recipient-exos (unwrap! (as-max-len? (append recipient-exos token-id) u100) ERR-TOO-MANY-CALLS-2))
-
                 (sender-calls (default-to {exos: (list )} (map-get? exerciser-calls sender)))
                 (sender-exos (get exos sender-calls))
-                
                 (call-info (unwrap! (map-get? call-data token-id) ERR-TOKEN-ID-NOT-FOUND))
                 (originator (get counterparty call-info))
                 (was-transferred (get was-transferred-once call-info))
             )
+            (asserts! (is-eq tx-sender sender) ERR-NOT-TOKEN-OWNER)
             
-            (asserts! (is-eq tx-sender sender) ERR-NOT-TOKEN-OWNER) ;; only the owner can transfer the token
-
-            ;; if was-transfered-once is none, and if exerciser-recipient is none, 
-            ;; then map-set exerciser-calls from recipient to a list with token-id 
             (if (not was-transferred) ;; no sender-calls so no need to filter it out with token-id
                 (begin
                     (map-set call-data token-id (merge call-info {was-transferred-once: true})) 
@@ -264,71 +188,37 @@
                 )
             )
            (nft-transfer? bitcoin-call token-id sender recipient)  
-            ;; (ok was-transferred)
         )
 )
-
-
 
 (define-public (transfer-same-strikes (my-calls (list 100 uint)) (sender principal) (recipient principal)) 
     (let 
         (
-            ;; on a besoin de fetcher les strikes-height de my-calls en mappant sur my-calls / call-data
             (my-expirations (map check-expirations my-calls))
-            ;; on a besoin de fetcher les strikes-price de my-calls / call-data
             (my-strikes (map check-strikes my-calls))
-
-            
-        )
-        
+        )       
         ;; var-set expiration-helper to the fist index of my-expirations
         (var-set expiration-helper (fold get-first my-expirations u0)) ;; double check unwrap-panic is okay here
-
-        ;; on va asserter que les calls sont dans le meme range de strike-height - say 7 blocks range
         (asserts! (fold same-expirations my-expirations true) (err "cant-bulk-transfer-different-expirations"))
-    
-        ;; var-set strike-helper to the fist index of my-strikes
         (var-set strike-helper u0)
-
-        ;; on va asserter que les calls sont tous du meme strike-price
         (asserts! (fold same-strikes my-strikes true) (err "cant-bulk-transfer-different-strikes"))
-
-
-        ;; si c'est le cas
-        ;; on va transferer les calls au recipient en mappant sur my-calls et en faisant un transfer pour chaque call
 
         ;; var-setting sender and recipient
         (var-set helper-sender sender)
-        (var-set helper-recipient recipient)
-        
+        (var-set helper-recipient recipient) 
         (ok (asserts! (fold transfer-bulk my-calls true) (err "err-bulk-transfer")))
-        ;; (ok (var-get expiration-helper))
-        
     )
 )
 
 (define-private (get-first (current uint) (result uint))
   (if (is-eq result u0) current result))
 
-
-;; (define-public (test-inputlist-synthax (my-calls (list 100 uint)))
-;;     (ok ( my-calls u1)) ;; that is not the function I want! I want the opposite
-;; )
-;; list-ref
-;;>> (contract-call? .sizeable-bitcoin-call test-inputlist-synthax (list u1 u2))
-;; (ok (u1 u2))
-
-
-;; transfer-same-strikes private functions
-(define-private (transfer-bulk (current uint) (result bool))
+(define-private (transfer-bulk (current uint) (result bool));; transfer-same-strikes private functions
     (if result
         (let 
             (
                 
-                (is-transferred (transfer current (var-get helper-sender) (var-get helper-recipient)))
-                ;; this line above will not exit control flow even when transfer is called by not the owner of current that would exit out in line 226 of transfer function
-                ;; so I am discovering somthing no good here for the other fold function, I need to check this then!
-
+                (is-transferred (transfer current (var-get helper-sender) (var-get helper-recipient))) ;; this line above will not exit control flow 
             ) 
             (is-ok is-transferred)
         )
@@ -372,6 +262,7 @@
     )
     )
 )
+
 (define-private (check-expirations (item uint)) 
     (get strike-height (default-to  { 
         counterparty: tx-sender,
@@ -379,7 +270,7 @@
         strike-price: u1,  
         strike-height: u0, ;; default to u0
         was-transferred-once: true  
-    };; I just want to default to something if map-get doesn't find anything
+    };; default to something if map-get doesn't find anything
     (map-get? call-data item)))
 )
 
@@ -390,12 +281,10 @@
         strike-price: u0, ;; default to u0 
         strike-height: u0,  
         was-transferred-once: true  
-    };; I just want to default to something if map-get doesn't find anything
+    };; default to something if map-get doesn't find anything
     (map-get? call-data item)))
 )
 
-;; private functions
-;;
 (define-private (is-not-token (item uint)) 
     (not (is-eq item (var-get helper-uint)))
 )
@@ -408,6 +297,7 @@
     )  
    )
 )
+
 (define-private (check-exercise (current uint) (result bool ))
     (begin
     (if (> (get strike-height (default-to  { 
@@ -416,23 +306,17 @@
         strike-price: u1,  
         strike-height: (+ block-height u1), ;; is superior to block-height
         was-transferred-once: true  
-    };; I just want to default to something that is higher than block-height if map-get doesn't find anything
-    (map-get? call-data current))) block-height) ;; if block-height is less than striek-height then exercise and spit true, else just spit true
+    };; default to something that is higher than block-height if map-get doesn't find anything
+    (map-get? call-data current))) block-height) ;; if block-height is less than strike-height then exercise and spit true, else just spit true
     (if result 
     (let 
-    ((result-mint-i (exercise 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc current))) ;; this never returns an error/none/or false because exercise exits control flow if there's an error
-
-    (if (is-ok result-mint-i) true false) ;; hence this is always true? but if it returns false, there is no change to the logic and the exit is taken care inside the exercise function
-    ;; thought of changing the functioning of this if false arrives at any point but seems unnecessary?
-    ;; and then exit control flow in main function if false is the final result
-    ;; (if (is-err result) result current)    
+    ((result-mint-i (exercise current))) ;; this never returns an error/none/or false because exercise exits control flow if there's an error - auditor question
+    (if (is-ok result-mint-i) true false) ;; hence this is always true? but if it returns false, there is no change to the logic and the exit is taken care inside the exercise function  
     )
     false)
     true) ;; do nothing if block-height is more than strike-height, and inside the "true" wrapped with a begin do we want to burn the NFT, probably not, we do that in the redeem function when the counterparty re-claims sBTC from contract
     )
 )
-;; idea: test whether result is false, and stop calling exercise if it is and return false forever in fold
-;; else return true
 
 ;; A private function called helper-quite-a-few that takes a number N between 1 and 100 
 ;; and spits out 0 if item is above number N, and last-token-Id + item otherwise. 
@@ -442,22 +326,19 @@
             (map-set call-data (+ (var-get last-call-id) item)
                 { 
                     counterparty : tx-sender,
-                    btc-locked : SBTC_ROUND_LOT_FACTOR, ;; this is 3m sats sBTC
+                    btc-locked : SBTC_ROUND_LOT_FACTOR, 
                     strike-price: (var-get strike-helper),
                     strike-height: (var-get expiration-helper),
                     was-transferred-once: false ;; verify if this doesn't cause any problems
                 }
             )
             ;; Mint the bitcoin-call NFT with the token-id last-call-id + item
-            (unwrap! (nft-mint? bitcoin-call (+ (var-get last-call-id) item) tx-sender) ERR-UNABLE-TO-MINT) ;; I wasn't able to unrwap this, so I improvised with this unwrap-panic and I get no error message!
-            ;; this is the only instance of minting the calls, so now we're simply adding the token to the reclaimable list
-            ;; (var-set reclaimable-calls (cons (+ (var-get last-call-id) item) (var-get reclaimable-calls)))
-            ;; (map-set reclaimable-calls tx-sender {reclaimable: (unwrap! (as-max-len? (append (get reclaimable (default-to {reclaimable: (list )} (map-get? reclaimable-calls tx-sender))) item) u100) ERR-TOO-MANY-CALLS-2)})
-
+            (unwrap! (nft-mint? bitcoin-call (+ (var-get last-call-id) item) tx-sender) ERR-UNABLE-TO-MINT) ;; this is the only instance of minting the calls, so now we're simply adding the token to the reclaimable list
             (ok (+ (var-get last-call-id) item)) ;; spit this out in the list (f(item1), ...f(item100))
             )
             (ok u0)) ;; spits out u0 if item is above
 )
+
 (define-private (pour-unwrapper (item (response uint uint)))
     (if (is-ok item) (unwrap-panic item) u0)
 )
@@ -465,21 +346,7 @@
 (define-private (is-null (item (response uint uint))) ;; it's (ok u1),(ok u2) ... (err u1011) (ok u0)
     (not (is-eq item (ok u0)))
 )
-;; (define-private (a-or-b (char (string-utf8 1)))
-;;   (begin
-;;     (var-set last-call-id (+ (var-get last-call-id) u1)) 
-;;     (asserts! (is-eq char u"a") (err u"b"))
-;;     (ok u"a")
-;;   )
-;; )
 
-;; (define-public (foo)
-;;   (begin
-;; ;;   (map a-or-b u"aba")
-;; ;;   (ok (var-get last-call-id))
-;;     (ok (map a-or-b u"aba"))
-;;   )
-;; )
 ;; read only functions
 ;;
 (define-read-only (get-last-token-id)
@@ -506,9 +373,9 @@
     (get reclaimable (default-to {reclaimable: (list )} (map-get? reclaimable-calls counterparty)))
 )
 
-;; public function
+;; More public and private function
 ;; Reclaiming capital from contract
-(define-public (counterparty-reclaim (wrapped-btc-contract <wrapped-btc-trait>) (token-id uint))
+(define-public (counterparty-reclaim (token-id uint))
     (let 
         (
             (call-info (unwrap! (get-call-data token-id) ERR-TOKEN-ID-NOT-FOUND))
@@ -520,15 +387,11 @@
         )
         (asserts! (< strike-height-token block-height) ERR-NOT-EXPIRED)
         (asserts! (is-eq counterparty tx-sender) ERR-CLAIMABLE-ONLY-BY-COUNTERPARTY)
-        ;; (unwrap! (contract-call? wrapped-btc-contract transfer sbtc-quantity (as-contract tx-sender) tx-sender none) ERR-IN-RECLAIM-CAPITAL) ;; reclaim sBTC capital from contract
-        (try! (as-contract (contract-call? wrapped-btc-contract transfer sbtc-quantity tx-sender t-sender none)))
+        (try! (as-contract (contract-call? .sbtc transfer sbtc-quantity tx-sender t-sender none)))
         (try! (nft-burn? bitcoin-call token-id token-owner))
         (ok (map-delete call-data token-id))
     )    
 )
-
-;; error: trait references can not be stored
-;; x 1 error detected
 
 (define-private (reclaim (token-id uint) (result bool))
     (begin
@@ -538,12 +401,12 @@
         strike-price: u1,  
         strike-height: (- block-height u1), ;; is inferior to block-height
         was-transferred-once: true  
-    };; I just want to default to something that is higher than block-height if map-get doesn't find anything
-    (map-get? call-data token-id))) block-height) ;; if block-height is less than striek-height then exercise and spit true, else just spit true
+    };; default to something that is higher than block-height if map-get doesn't find anything
+    (map-get? call-data token-id))) block-height) ;; if block-height is less than strike-height then exercise and spit true, else just spit true
         (if result
             (let 
                 (
-                (result-reclaim-token (counterparty-reclaim 'ST3D8PX7ABNZ1DPP9MRRCYQKVTAC16WXJ7VCN3Z97.sbtc token-id)) ;; I call the counterparty-reclaim 
+                (result-reclaim-token (counterparty-reclaim token-id)) ;; I call the counterparty-reclaim 
                 )
                 true
             )
@@ -553,66 +416,14 @@
     )    
 )
 
-
-
 (define-public (reclaiming)
     (let
         (
-        (tx-reclaimable (unwrap! (map-get? reclaimable-calls tx-sender) (err "no reclaimable calls"))) ;; this has to be an unwwrap to exit flow and not a default, else the empty list in fold won't go thru?
+        (tx-reclaimable (unwrap! (map-get? reclaimable-calls tx-sender) (err "no reclaimable calls"))) ;; this has to be an unwwrap to exit flow and not a default, else the empty list in fold won't go thru
         (reclaimable-list (get reclaimable tx-reclaimable))
         (reclaim-em-all (asserts! (fold reclaim reclaimable-list true) (err "failed to reclaim all")))
         )
         (map-delete reclaimable-calls tx-sender)
         (ok reclaim-em-all)
-        ;; (ok reclaimable-list)
     )
 )
-
-;; TO do:
-;; would be great to transfer a # of tokens at once if they're all the same per strike!
-;; ;; debug the same expirations, setting the first one is pbmatic?
-;; ;; asserting out if I've missed any in it?
-
-;; Maybe a commit-reveal scheme contract?
-;; This is a possible contract does not deal with option trading, but it should give you a rough idea of how a commit-reveal scheme could be implemented in Clarity.
-
-;; (define-map commitments
-;;   ((commitment: (buff 64)))
-;;   (
-;;     (user: principal)
-;;   )
-;; )
-
-;; (define-public (commit (hash: (buff 64)))
-;;   (let ((user tx-sender))
-;;     (map-insert commitments
-;;       {
-;;         commitment: hash
-;;       }
-;;       {
-;;         user: user
-;;       }
-;;     )
-;;   )
-;;   (ok true)
-;; )
-
-;; (define-public (reveal (secret: (buff 32)) (nonce: (buff 32)))
-;;   (let (
-;;     (hash (hash160 (concat secret nonce)))
-;;     (user tx-sender)
-;;   )
-;;     (match (map-get? commitments {commitment: hash})
-;;       entry (if (is-eq user (get user entry))
-;;         (begin
-;;           (ok "Commitment Valid and Revealed!")
-;;         )
-;;         (err "Invalid reveal")
-;;       )
-;;       (err "No matching commitment")
-;;     )
-;;   )
-;; )
-;; The commitments map stores hashes sent by users. Each hash is tied to the address that sent it.
-;; The commit function allows a user to store a hash. The user sends a 64-byte buffer as input, and the function stores the hash in the commitments map, linked to the tx-sender.
-;; The reveal function allows a user to reveal their secret (call or put). The user sends two 32-byte buffers: the original secret, and the nonce. The function hashes the concatenated secret and nonce using the hash160 function and checks if the result matches a hash in the commitments map.
