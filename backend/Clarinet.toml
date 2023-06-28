@@ -6,10 +6,11 @@ telemetry = true
 cache_dir = './.cache'
 
 [[project.requirements]]
-contract_id = 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait'
+contract_id = 'ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.nft-trait'
 
 [[project.requirements]]
-contract_id = 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard'
+contract_id = 'ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.sip-010-trait-ft-standard'
+
 [contracts.bitcoin-call]
 path = 'contracts/bitcoin-call.clar'
 clarity_version = 2
@@ -19,6 +20,8 @@ epoch = 2.1
 path = 'contracts/sbtc.clar'
 clarity_version = 2
 epoch = 2.1
+[repl.analysis]
+passes = []
 
 [repl.analysis.check_checker]
 strict = false

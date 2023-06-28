@@ -1,4 +1,5 @@
-(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait) ;; covered-calls are nfts + a map
+;; (impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait) ;; covered-calls are nfts + a map
+(impl-trait 'ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.nft-trait.nft-trait) ;; testnet trait
 ;; title: bitcoin-call.clar
 ;; version 1
 ;; let's add the possibility for a user to 
