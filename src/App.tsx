@@ -215,7 +215,6 @@ function App() {
                   contractName="bitcoin-call"
                   functionName="mint"
                   functionArgs={[
-                    cpCV,
                     callQuery.call_expire_at, // uint(2100), //
                     callQuery.strike,
                     callQuery.btclocked,
