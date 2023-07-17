@@ -1,9 +1,22 @@
-![image](https://github.com/Rapha-btc/fountain-blue/assets/6700158/6f2cb56e-eb94-4f77-ba69-8d6cf8efc3fc)
+;; Resurrection
 
-When creating a CALL, you deposit 3m sats and set a strike price in STX. A CALL holder can then buy these 3m sats at your set price by sending you the strike price. Their right to do so expires after a predetermined block number.
+;; Dr. $uss of $aints is aiming to pioneer a first-of-its-kind $aint resurection from Stacks (aka "Evil 3 letters")
+;; to Bitcoin ordinals, via a two-way bridge. The proposed process is:
 
-https://www.youtube.com/watch?v=3mj5DIqdEPQ
+;; 1. The NFT owner on Stacks designates their Bitcoin Wallet (smart contract on STX)
+;; 2. They then transfer their NFT tpo 'cant-be-evil.stx' (smart contract lacks a burn function).
+;; 3. The Saints web portal then permits the specified Bitcoin address to inscribe the $aint resurected Bitcoin ordinals.
 
-![image](https://github.com/Rapha-btc/fountain-blue/assets/6700158/8c905a11-a1ae-4616-b257-b0183c81b21c)
+;; A question remains: does Dr. $uss need an oracle/DeepLake for step 3?
+;; Answer: Deeplake oracle will be able to check that the nft was burnt
 
-![image](https://github.com/Rapha-btc/fountain-blue/assets/6700158/3dd522d8-3f39-41be-bae1-cf5a939ae00f)
+;; The potential hype for this project is significant, given the high-profile community involved.
+;; As Trevor says, the quality of a community's members dictates its market cap.
+
+;; Returning from Bitcoin to STX follows this process:
+
+;; To bridge from Bitcoin to STX, it may be prudent to wait until the sBTC protocol enables such conversions.
+;; We suggest developing a fresh set of Stacks contracts that would ensure a maximum limit
+;; for the entire collection or establish a mechanism to freeze it once it reaches 777.
+;; In the event that the IPFS image or video becomes inaccessible in the future, the holder of the NFT
+;; on the Stacks (STX) blockchain will retain control over the ordinal on Bitcoin.

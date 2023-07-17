@@ -10,14 +10,28 @@ contract_id = 'ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.nft-trait'
 
 [[project.requirements]]
 contract_id = 'ST1NXBK3K5YYMD6FD41MVNP3JS1GABZ8TRVX023PT.sip-010-trait-ft-standard'
-
 [contracts.bitcoin-call]
 path = 'contracts/bitcoin-call.clar'
 clarity_version = 2
 epoch = 2.1
 
+[contracts.resurrection]
+path = 'contracts/resurrection.clar'
+clarity_version = 2
+epoch = 2.1
+
+[contracts.saints]
+path = 'contracts/saints.clar'
+clarity_version = 2
+epoch = 2.1
+
 [contracts.sbtc]
 path = 'contracts/sbtc.clar'
+clarity_version = 2
+epoch = 2.1
+
+[contracts.sip009-nft-trait]
+path = 'contracts/sip009-nft-trait.clar'
 clarity_version = 2
 epoch = 2.1
 [repl.analysis]
