@@ -1,34 +1,29 @@
-;; Resurrection
+;; Thanks go to Andre.btc, Michael Cohen, Friedger M, Kenny Rogers, Abdelghafour Harraz, Setzeus, Rabbi Gains, Dr. $uss, Hande Ercan and the Human Rights Foundation for their contributions to this project.
 
+;; Resurrection.clar 
 ;; Dr. $uss of $aints is aiming to pioneer a first-of-its-kind $aint resurection from Stacks (aka "Evil 3 letters") 
-;; to Bitcoin ordinals, via a two-way bridge. The proposed process is:
+;; to Bitcoin ordinals, via a two-way bridge.
+;; Dr Suss provides 167 minimized ASSETS (777) JPEG and backs up the original IPFS files on a server or IPFS pinning service.
+;; The proposed process is:
 
-;; 1. The NFT owner on Stacks designates their Bitcoin Wallet (smart contract on STX)
-;; 2. They then lock their NFT into the smart contract 
-;; 3. The Saints web portal then permits the specified Bitcoin address to inscribe the $aint resurected Bitcoin ordinals.
-
-;; 4. once it's inscribed then you can burn it
-;; when the inscription happens, the clarity reads it? and in turn burns it
-;; method that takes bitcoin transaction that is minting/insribing the ordinal
-;; verifies that transaction-> in the bitcoin TSX you will want the NFT id 
-;; 'cant-be-evil.stx' (smart contract lacks a burn function).
-
-;; A question remains: does Dr. $uss need an oracle/DeepLake for step 3?
-;; Answer: Deeplake oracle will be able to check that the nft was burnt
-
-;; The potential hype for this project is significant, given the high-profile community involved. 
-;; As Trevor says, the quality of a community's members dictates its market cap.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; - T1: Lock NFT in Stacks Smart contract (resurrection.clar) + insert map of [token-id and Taproot Address of receiver]
+;; - T2: Inscribe ordinal with assets from Creator + lock ordinal in DLC using DeepLake graphql API
+;; - T3: Take T2 transaction and feed it in a method from resurrection.clar that verifies the token-id and Taproot Address of receiver from the Bitcoin T2 transaction is the same as from the insert-map (define-map sleepers in resurrection.clar) and then burns the token-id on Stacks (transfers it to cant-be-evil.stx for $aints and uses the burn function of boom-nfts and seven-bitcoin-days for 21 bitcoins days (get-owner become none)
+;; - T4: Outcome 1: release ordinal to Taproot receiver address. Outcome 2: 21 days and no T3 has occured, the Ordinal is sent to a wallet controlled by the Human Rights Foundation or another charity.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Returning from Bitcoin to STX follows this process:
 
 ;; To bridge from Bitcoin to STX, it may be prudent to wait until the sBTC protocol enables such conversions. 
+;; See Andre's post on sords https://forum.stacks.org/t/sbtc-ordinals-sords/14623
 ;; We suggest developing a fresh set of Stacks contracts that would ensure a maximum limit 
 ;; for the entire collection or establish a mechanism to freeze it once it reaches 777.
-;; In the event that the IPFS image or video becomes inaccessible in the future, the holder of the NFT 
+;; In the event that image or video become inaccessible in the future on IPFS, the holder of the NFT 
 ;; on the Stacks (STX) blockchain will retain control over the ordinal on Bitcoin.
 
-(define-constant POWER-OF-GOD tx-sender) ;; The resurrection of Jesus is seen as a demonstration of God's power over life and death.
-(define-constant EVIL-SAINT 'SP000000000000000000002Q6VF78) ;; EVIL-$AINT ST000000000000000000002AMW42H
+(define-constant POWER-OF-GOD tx-sender) ;; Dharma can refer to the inherent nature of reality or the fundamental principles that order the universe. It embodies the understanding that everything is interconnected and governed by natural laws.
+(define-constant EVIL-SAINT 'SP000000000000000000002Q6VF78) ;; EVIL-$AINT ST000000000000000000002AMW42H - harma is also the path of righteousness and living one's life according to the ethical principles laid out by the Buddha. This includes practices like meditation, adherence to moral precepts, wisdom cultivation, and compassion.
 
 ;; I need a map of the sleepers and their corresponding muad-dibs
 (define-map sleepers uint {
@@ -37,8 +32,13 @@
     muad-dib: (string-ascii 62), ;; ordinal receiver address - 62?
     }) ;; He who controls the spice controls the universe.
 
-;; 1. The NFT owner on Stacks designates their Ordinal and btc Wallet (smart contract on STX)
-;; 2. They then transfer their NFT to 'cant-be-evil.stx' (smart contract lacks a burn function).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; T1: Lock NFT in this Stacks Smart contract (resurrection.clar) 
+;;;;;; + insert map of [token-id and Taproot Address of receiver]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; The NFT owner on Stacks designates their Ordinal and btc Wallet
+;; They then lock their NFT in this contract
 (define-public (the-sleeper-has-awakened (token-id uint) (messiah (string-ascii 52)) (muad-dib (string-ascii 62))) ;; or 62?
     (let
         (
@@ -62,23 +62,48 @@
     )
 ) 
 
-;; 3. The Saints web portal then permits the specified Bitcoin address to inscribe the $aint resurected Bitcoin ordinals.
-;; Dr Suss provides 167 ASSETS (777) JPEG  
-;; Inscription -> Mike
-
-;; 4. once it's inscribed then you can burn it
-;; EVIL-SAINT
-
-;; could you inscribe it in a DLC?
-;; then it's locked
-;; future event is the burnt
-;; DLC instantiate / terms of the contract: 
-;; outcome 1: a burn event happen on the BC -> oracle releases the signature -> unlocks
-;; outcome 2: the inscription is burnt if 
-;; create a UI where the user instantiate the DLC, they provide the signature and FEE to mint the NFT on Bitcoin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; T2: Inscribe ordinal with assets from Creator  
+;;;;;; + lock ordinal in DLC using DeepLake graphql API from the Front End
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; create a UI where the user instantiate the DLC
+;; they provide the signature and FE to mint the Ordi on Bitcoin
 ;; it's locked and they get it once they burn it 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; T3: Take T2 transaction and feed it in a method from resurrection.clar 
+;;;;;; that verifies the token-id and Taproot Address of receiver from the Bitcoin T2 transaction 
+;;;;;; is the same as from the insert-map (define-map sleepers in resurrection.clar) 
+;;;;;; and then burns the token-id on Stacks 
+;;;;;; (transfers it to cant-be-evil.stx for $aints (EVIL-SAINT)
+;;;;;; and uses the burn function of boom-nfts and seven-bitcoin-days for 21 bitcoins days 
+;;;;;; (get-owner become none)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; T4: Outcome 1: release ordinal to Taproot receiver address. 
+;;;;;;     Outcome 2: 21 days and no T3 has occured, 
+;;;;;;     the Ordinal is sent to a wallet controlled by the Human Rights Foundation or another charity.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Closing thoughts
+;; "The sleeper must awaken." "The sleeper has awakened!"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; "When you get to the void, there is an enormous and unbelievable sense of relief, that's nirvana."
+;; "So they are liberated and yet they can't quite say why or what it is that they found out, so they call it the void.
+;; "But Nagarjuna went on to say, You mustn't cling to the void. You have to void the void. And so the void of non void is the great state of Nagarjuna's Buddhism."
+;; "You see, space is your mind. It's very difficult for us to see that because we think we're in space and look out at it. Spaces... They're the dimensions of consciousness."
+;; https://youtube.com/watch?v=GBj2plk-12Q&feature=shareb
+
+;; Father, the sleeper has awaken.
+;; https://www.youtube.com/embed/gEMdJyY-1K0
+
+;; I'm giving you a night call to tell you how I feel
+;; I'm going to tell you somethig you don't want to hear
+;; there's something inside you it's hard to explain
+;; https://www.youtube.com/watch?v=ai1g9qWSW5I
 
