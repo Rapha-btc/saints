@@ -13,6 +13,8 @@
 ;; The potential hype for this project is significant, given the high-profile community involved.
 ;; As Trevor says, the quality of a community's members dictates its market cap.
 
+https://www.youtube.com/embed/gEMdJyY-1K0
+
 ;; Returning from Bitcoin to STX follows this process:
 
 ;; To bridge from Bitcoin to STX, it may be prudent to wait until the sBTC protocol enables such conversions.
