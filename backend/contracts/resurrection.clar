@@ -4,8 +4,14 @@
 ;; to Bitcoin ordinals, via a two-way bridge. The proposed process is:
 
 ;; 1. The NFT owner on Stacks designates their Bitcoin Wallet (smart contract on STX)
-;; 2. They then transfer their NFT tpo 'cant-be-evil.stx' (smart contract lacks a burn function).
+;; 2. They then lock their NFT into the smart contract 
 ;; 3. The Saints web portal then permits the specified Bitcoin address to inscribe the $aint resurected Bitcoin ordinals.
+
+;; 4. once it's inscribed then you can burn it
+;; when the inscription happens, the clarity reads it? and in turn burns it
+;; method that takes bitcoin transaction that is minting/insribing the ordinal
+;; verifies that transaction-> in the bitcoin TSX you will want the NFT id 
+;; 'cant-be-evil.stx' (smart contract lacks a burn function).
 
 ;; A question remains: does Dr. $uss need an oracle/DeepLake for step 3?
 ;; Answer: Deeplake oracle will be able to check that the nft was burnt
@@ -44,10 +50,10 @@
 
         ;; The water of life - the spice - is the most precious substance in the universe
         ;; The spice of agony - The Water of Life is known to be extremely dangerous, and most individuals who attempt to undergo the ritual die in the process. 
-        (unwrap! (contract-call? .saints transfer token-id tx-sender EVIL-SAINT) (err "err-cant-cross-the-Styx")) ;; the sleeper must burn the evil $aint
+        (unwrap! (contract-call? .saints transfer token-id sleeper POWER-OF-GOD) (err "err-cant-cross-the-Styx")) ;; the sleeper must burn the evil $aint
 
-        ;; The ritual triggers a profound transformation within him, enhancing his mental and prescient abilities to an extraordinary degree. It deepens his connection to the collective unconsciousness of humanity and bestows upon him unparalleled prescience and insight.
-        ;; Surviving the Water of Life ritual is a critical step in a $aint's journey towards his awakening as Muad'Dib 
+        ;; The ritual triggers a profound transformation within him, enhancing his mental and prescient abilities to an extraordinary degree. It deepens her connection to the collective unconsciousness of humanity and bestows upon her unparalleled prescience and insight.
+        ;; Surviving the Water of Life ritual is a critical step in a $aint's journey towards her awakening as Muad'Dib 
         (map-set sleepers token-id {
             sleeper: sleeper, 
             messiah: messiah, 
@@ -57,5 +63,22 @@
 ) 
 
 ;; 3. The Saints web portal then permits the specified Bitcoin address to inscribe the $aint resurected Bitcoin ordinals.
+;; Dr Suss provides 167 ASSETS (777) JPEG  
+;; Inscription -> Mike
+
+;; 4. once it's inscribed then you can burn it
+;; EVIL-SAINT
+
+;; could you inscribe it in a DLC?
+;; then it's locked
+;; future event is the burnt
+;; DLC instantiate / terms of the contract: 
+;; outcome 1: a burn event happen on the BC -> oracle releases the signature -> unlocks
+;; outcome 2: the inscription is burnt if 
+;; create a UI where the user instantiate the DLC, they provide the signature and FEE to mint the NFT on Bitcoin
+;; it's locked and they get it once they burn it 
+
+
+
 
 
