@@ -22,15 +22,6 @@
 ;; In the event that image or video become inaccessible in the future on IPFS, the holder of the NFT
 ;; on the Stacks (STX) blockchain will retain control over the ordinal on Bitcoin.
 
-;; Returning from Bitcoin to STX follows this process:
-
-;; To bridge from Bitcoin to STX, it may be prudent to wait until the sBTC protocol enables such conversions.
-;; See Andre's post on sords https://forum.stacks.org/t/sbtc-ordinals-sords/14623
-;; We suggest developing a fresh set of Stacks contracts that would ensure a maximum limit
-;; for the entire collection or establish a mechanism to freeze it once it reaches 777.
-;; In the event that image or video become inaccessible in the future on IPFS, the holder of the NFT
-;; on the Stacks (STX) blockchain will retain control over the ordinal on Bitcoin.
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Closing thoughts
 ;; "The sleeper must awaken." "The sleeper has awakened!"
